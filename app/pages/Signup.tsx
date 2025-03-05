@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import {
   Keyboard,
 } from "react-native";
 import { tailwind } from "react-native-tailwindcss";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router"; // Import useLocalSearchParams
 import Ionicons from "@expo/vector-icons/Ionicons";
 import useTranslation from "@/app/i8n/useTranslationHook";
 import { LinearGradient } from 'expo-linear-gradient';
@@ -21,6 +21,7 @@ import { AppConfig } from "@/app/config/AppConfig";
 
 const Signup: React.FC = () => {
   const router = useRouter();
+  const params = useLocalSearchParams(); // Access route parameters
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [selectedCountryCode, setSelectedCountryCode] = useState("+60");
   const [fullName, setFullName] = useState("");
@@ -38,6 +39,16 @@ const Signup: React.FC = () => {
     mobileNumber: "",
     password: "",
   });
+
+  // Prefill fields from route parameters
+  useEffect(() => {
+    if (params.fullName) {
+      setFullName(params.fullName as string); // Cast to string
+    }
+    if (params.email) {
+      setEmail(params.email as string); // Cast to string
+    }
+  }, [params]);
 
   const countryPrefixes = [
     { value: "+60", flag: "🇲🇾" },
@@ -57,25 +68,28 @@ const Signup: React.FC = () => {
     const newErrors = { fullName: "", email: "", mobileNumber: "", password: "" };
 
     if (!fullName.trim()) {
-      newErrors.fullName = t('signup.fullNameRequired');
+        newErrors.fullName = t('signup.fullNameRequired');
     }
     if (!email.trim()) {
-      newErrors.email = t('signup.emailRequired');
+        newErrors.email = t('signup.emailRequired');
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = t('signup.invalidEmail');
+        newErrors.email = t('signup.invalidEmail');
     }
     if (!mobileNumber.trim()) {
-      newErrors.mobileNumber = t('signup.mobileNumberRequired');
+        newErrors.mobileNumber = t('signup.mobileNumberRequired');
+    } else if (mobileNumber.length < 8 || mobileNumber.length > 12) {
+        newErrors.mobileNumber = t('signup.mobileNumberInvalidLength'); // Add this key to your translations
     }
     if (!password.trim()) {
-      newErrors.password = t('signup.passwordRequired');
+        newErrors.password = t('signup.passwordRequired');
     } else if (password.length < 6) {
-      newErrors.password = t('signup.passwordTooShort');
+        newErrors.password = t('signup.passwordTooShort');
     }
 
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => error === "");
-  };
+};
+
 
   const handleSignup = async () => {
     if (!validateFields()) {
@@ -124,7 +138,6 @@ const Signup: React.FC = () => {
   };
 
   return (
-    
     <TouchableWithoutFeedback onPress={() => {
       setIsDropdownVisible(false); // Collapse dropdown when touching outside
       Keyboard.dismiss(); // Dismiss keyboard if open
@@ -138,160 +151,152 @@ const Signup: React.FC = () => {
           colors={['#E1F2FF', '#BFE6FF', '#99D6FF']}
           style={[tailwind.flex1, tailwind.pX4]}
         >
-            <ScrollView contentContainerStyle={[tailwind.flexGrow]}>
-          {/* Back Button */}
-          <TouchableOpacity onPress={() => router.back()} style={[tailwind.mB4, tailwind.mT10]}>
-            <View style={[tailwind.bgWhite, tailwind.roundedFull, tailwind.p2, tailwind.shadowMd, { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }]}>
-              <Ionicons name="arrow-back" size={24} color="#0369A1" />
+          <ScrollView contentContainerStyle={[tailwind.flexGrow]}>
+            {/* Back Button */}
+            <TouchableOpacity onPress={() => router.back()} style={[tailwind.mB4, tailwind.mT10]}>
+              <View style={[tailwind.bgWhite, tailwind.roundedFull, tailwind.p2, tailwind.shadowMd, { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }]}>
+                <Ionicons name="arrow-back" size={24} color="#0369A1" />
+              </View>
+            </TouchableOpacity>
+
+            {/* Title Section */}
+            <View style={[tailwind.mT8, tailwind.mB8]}>
+              <Text style={[tailwind.text4xl, tailwind.fontBold, tailwind.textBlue900, tailwind.mB2]}>
+                {t('signup.welcome')}
+              </Text>
+              <Text style={[tailwind.textXl, tailwind.textBlue700, tailwind.mB2]}>
+                {t('signup.portalTitle')}
+              </Text>
             </View>
-          </TouchableOpacity>
 
-          {/* Title Section */}
-          <View style={[tailwind.mT8, tailwind.mB8]}>
-            <Text style={[tailwind.text4xl, tailwind.fontBold, tailwind.textBlue900, tailwind.mB2]}>
-              {t('signup.welcome')}
-            </Text>
-            <Text style={[tailwind.textXl, tailwind.textBlue700, tailwind.mB2]}>
-              {t('signup.portalTitle')}
-            </Text>
-          </View>
+            {/* Input Section */}
+            <View style={[tailwind.bgWhite, tailwind.roundedLg, tailwind.p6, tailwind.shadowLg, tailwind.mB8]}>
+              {/* Full Name Input */}
+              <View style={[styles.inputContainer, tailwind.mB4]}>
+                <TextInput
+                  style={[tailwind.flex1, tailwind.h12, tailwind.pX4]}
+                  placeholder={t('signup.fullNamePlaceholder')}
+                  value={fullName}
+                  onChangeText={setFullName}
+                  placeholderTextColor="#64748B"
+                />
+              </View>
+              {errors.fullName ? <Text style={styles.errorText}>{errors.fullName}</Text> : null}
 
-          {/* Input Section */}
-          <View style={[tailwind.bgWhite, tailwind.roundedLg, tailwind.p6, tailwind.shadowLg, tailwind.mB8]}>
-            {/* Full Name Input */}
-            <View style={[styles.inputContainer, tailwind.mB4]}>
-              <TextInput
-                style={[tailwind.flex1, tailwind.h12, tailwind.pX4]}
-                placeholder={t('signup.fullNamePlaceholder')}
-                value={fullName}
-                onChangeText={setFullName}
-                placeholderTextColor="#64748B"
-              />
-            </View>
-            {errors.fullName ? <Text style={styles.errorText}>{errors.fullName}</Text> : null}
+              {/* Email Input */}
+              <View style={[styles.inputContainer, tailwind.mB4]}>
+                <TextInput
+                  style={[tailwind.flex1, tailwind.h12, tailwind.pX4]}
+                  placeholder={t('signup.emailPlaceholder')}
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  placeholderTextColor="#64748B"
+                />
+              </View>
+              {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
-            {/* Email Input */}
-            <View style={[styles.inputContainer, tailwind.mB4]}>
-              <TextInput
-                // style={[tailwind.flex1, tailwind.h12, tailwind.pX4]}
-                // placeholder={t('signup.emailPlaceholder')}
-                // value={email}
-                // onChangeText={setEmail}
-                // keyboardType="email-address"
-                // placeholderTextColor="#64748B"
+              {/* Mobile Number Input */}
+              <View style={[tailwind.flexRow, tailwind.itemsCenter, tailwind.bgBlue100, tailwind.roundedLg, tailwind.mB4, tailwind.border, tailwind.borderBlue200]}>
+                <View style={[tailwind.w24, tailwind.borderR, tailwind.borderBlue200]}>
+                  <TouchableOpacity
+                    style={[tailwind.h12, tailwind.bgWhite, tailwind.flexRow, tailwind.itemsCenter, tailwind.pX4, tailwind.border, tailwind.borderGray400]}
+                    onPress={() => setIsDropdownVisible(!isDropdownVisible)}
+                  >
+                    <Text style={[tailwind.textBase]}>
+                      {countryPrefixes.find(country => country.value === selectedCountryCode)?.flag} {selectedCountryCode}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <TextInput
+                  style={[tailwind.flex1, tailwind.h12, tailwind.pX4]}
+                  placeholder={t('signup.mobileNumberPlaceholder')}
+                  value={mobileNumber}
+                  onChangeText={handleMobileNumberChange}
+                  keyboardType="phone-pad"
+                  placeholderTextColor="#64748B"
+                />
+              </View>
+              {errors.mobileNumber ? <Text style={styles.errorText}>{errors.mobileNumber}</Text> : null}
 
-                style={[tailwind.flex1, tailwind.h12, tailwind.pX4]}
-                placeholder={t('signup.emailPlaceholder')}
-                value={email}
-                onChangeText={setEmail}
-                placeholderTextColor="#64748B"
-              />
-            </View>
-            {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+              {/* Country Code Dropdown */}
+              {isDropdownVisible && (
+                <View style={[tailwind.absolute, tailwind.bgWhite, tailwind.roundedLg, tailwind.shadowLg, { top: 60, left: '50%', transform: [{ translateX: -100 }], width: '80%', zIndex: 999 }]}>
+                  <ScrollView style={{ maxHeight: 200 }}>
+                    {countryPrefixes.map((country) => (
+                      <TouchableOpacity
+                        key={country.value}
+                        style={[tailwind.p4, tailwind.borderB, tailwind.borderGray200]}
+                        onPress={() => {
+                          setSelectedCountryCode(country.value);
+                          setIsDropdownVisible(false); // Close dropdown after selection
+                        }}
+                      >
+                        <Text style={[tailwind.textGray700]}>
+                          {country.flag} {country.value}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
 
-            {/* Mobile Number Input */}
-            <View style={[tailwind.flexRow, tailwind.itemsCenter, tailwind.bgBlue100, tailwind.roundedLg, tailwind.mB4, tailwind.border, tailwind.borderBlue200]}>
-              <View style={[tailwind.w24, tailwind.borderR, tailwind.borderBlue200]}>
+              {/* Password Input */}
+              <View style={[tailwind.flexRow, tailwind.itemsCenter, tailwind.bgBlue100, tailwind.roundedLg, tailwind.mB4, tailwind.border, tailwind.borderBlue200]}>
+                <TextInput
+                  style={[tailwind.flex1, tailwind.h12, tailwind.pX4]}
+                  placeholder={t('signup.passwordPlaceholder')}
+                  secureTextEntry={!isPasswordVisible}
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholderTextColor="#64748B"
+                />
                 <TouchableOpacity
-                  style={[tailwind.h12, tailwind.bgWhite, tailwind.flexRow, tailwind.itemsCenter, tailwind.pX4, tailwind.border, tailwind.borderGray400]}
-                  onPress={() => setIsDropdownVisible(!isDropdownVisible)}
+                  style={[tailwind.pX4]}
+                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
                 >
-                  <Text style={[tailwind.textBase]}>
-                    {countryPrefixes.find(country => country.value === selectedCountryCode)?.flag} {selectedCountryCode}
-                  </Text>
+                  <Ionicons
+                    name={isPasswordVisible ? "eye" : "eye-off"}
+                    size={24}
+                    color="#0369A1"
+                  />
                 </TouchableOpacity>
               </View>
-              <TextInput
-                style={[tailwind.flex1, tailwind.h12, tailwind.pX4]}
-                placeholder={t('signup.mobileNumberPlaceholder')}
-                value={mobileNumber}
-                onChangeText={handleMobileNumberChange}
-                keyboardType="phone-pad"
-                placeholderTextColor="#64748B"
-              />
-            </View>
-            {errors.mobileNumber ? <Text style={styles.errorText}>{errors.mobileNumber}</Text> : null}
+              {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
-            {/* Country Code Dropdown */}
-            {isDropdownVisible && (
-              <View style={[tailwind.absolute, tailwind.bgWhite, tailwind.roundedLg, tailwind.shadowLg, { top: 60, left: '50%', transform: [{ translateX: -100 }], width: '80%', zIndex: 999 }]}>
-                <ScrollView style={{ maxHeight: 200 }}>
-                  {countryPrefixes.map((country) => (
-                    <TouchableOpacity
-                      key={country.value}
-                      style={[tailwind.p4, tailwind.borderB, tailwind.borderGray200]}
-                      onPress={() => {
-                        setSelectedCountryCode(country.value);
-                        setIsDropdownVisible(false); // Close dropdown after selection
-                      }}
-                    >
-                      <Text style={[tailwind.textGray700]}>
-                        {country.flag} {country.value}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              </View>
-            )}
-
-            {/* Password Input */}
-            <View style={[tailwind.flexRow, tailwind.itemsCenter, tailwind.bgBlue100, tailwind.roundedLg, tailwind.mB4, tailwind.border, tailwind.borderBlue200]}>
-              <TextInput
-                style={[tailwind.flex1, tailwind.h12, tailwind.pX4]}
-                placeholder={t('signup.passwordPlaceholder')}
-                secureTextEntry={!isPasswordVisible}
-                value={password}
-                onChangeText={setPassword}
-                placeholderTextColor="#64748B"
-              />
+              {/* Signup Button */}
               <TouchableOpacity
-                style={[tailwind.pX4]}
-                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                style={[
+                  tailwind.bgBlue600,
+                  tailwind.pY4,
+                  tailwind.roundedLg,
+                  tailwind.shadowMd,
+                  isLoading && tailwind.bgBlue400,
+                ]}
+                onPress={handleSignup}
+                disabled={isLoading}
               >
-                <Ionicons
-                  name={isPasswordVisible ? "eye" : "eye-off"}
-                  size={24}
-                  color="#0369A1"
-                />
+                <Text style={[tailwind.textWhite, tailwind.textCenter, tailwind.fontBold, tailwind.textLg]}>
+                  {isLoading ? t('signup.creatingAccount') : t('signup.createAccount')}
+                </Text>
               </TouchableOpacity>
             </View>
-            {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
-            {/* Signup Button */}
-            <TouchableOpacity
-              style={[
-                tailwind.bgBlue600,
-                tailwind.pY4,
-                tailwind.roundedLg,
-                tailwind.shadowMd,
-                isLoading && tailwind.bgBlue400,
-              ]}
-              onPress={handleSignup}
-              disabled={isLoading}
-            >
-              <Text style={[tailwind.textWhite, tailwind.textCenter, tailwind.fontBold, tailwind.textLg]}>
-                {isLoading ? t('signup.creatingAccount') : t('signup.createAccount')}
+            {/* Create Account Link */}
+            <View style={[tailwind.itemsCenter, tailwind.mB8]}>
+              <Text style={[tailwind.textBlue800]}>
+                {t('signup.alreadyHaveAccount')}{' '}
+                <Text
+                  style={[tailwind.textBlue600, tailwind.fontBold]}
+                  onPress={() => router.push("/")}
+                >
+                  {t('signup.signIn')}
+                </Text>
               </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Create Account Link */}
-          <View style={[tailwind.itemsCenter, tailwind.mB8]}>
-            <Text style={[tailwind.textBlue800]}>
-              {t('signup.alreadyHaveAccount')}{' '}
-              <Text
-                style={[tailwind.textBlue600, tailwind.fontBold]}
-                onPress={() => router.push("/")}
-              >
-                {t('signup.signIn')}
-              </Text>
-            </Text>
-          </View>
+            </View>
           </ScrollView>
         </LinearGradient>
-       
       </KeyboardAvoidingView>
-
     </TouchableWithoutFeedback>
   );
 };

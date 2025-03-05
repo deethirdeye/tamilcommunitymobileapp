@@ -59,7 +59,7 @@ const Login: React.FC = () => {
   
     iosClientId,
     androidClientId,
-
+    webClientId,
     redirectUri
   };
 
@@ -232,6 +232,17 @@ useEffect(()=> {
     }
   };
   const handleLogin = async (googleResponse?: any) => {
+
+
+    const messageMap: { [key: string]: string } = {
+      "User not registered with us.": "apiMessages.notRegistered",
+
+    };
+
+    const getTranslatedMessage = (message: string, t: any) => {
+      const translationKey = messageMap[message];
+      return translationKey ? t(translationKey) : message;
+    };
     // Check if this is a Google login
     if (googleResponse) {
       // Extract information from the Google response
@@ -287,8 +298,17 @@ useEffect(()=> {
             });
           }
         } else {
-          Alert.alert(t('login.alerts.attention'), data.Message || 'Google Login Failed.');
-          router.push('/pages/login');
+          Alert.alert(
+            t('login.alerts.attention'), 
+            `${getTranslatedMessage(data.Message, t) || t('login.alerts.googleLoginFailed')}`
+          );
+          router.push({
+            pathname: '/pages/Signup',
+            params: {
+              fullName: googleResponse?.name || '',
+              email: googleResponse?.email || '',
+            },
+          });
         }
       } catch (error) {
         Alert.alert(t('login.alerts.attention'), t('login.alerts.networkError'));
@@ -406,7 +426,7 @@ useEffect(()=> {
           style={[tailwind.flex1, tailwind.pX4]}
         >
           <ScrollView contentContainerStyle={[tailwind.flexGrow,tailwind.pB8]}>
-          <View style={[tailwind.mT12, tailwind.mB8, tailwind.pT10]}>
+          <View style={[tailwind.mT12, tailwind.mB8, tailwind.pT2]}>
             <Text style={[tailwind.text4xl, tailwind.fontBold, tailwind.textBlue900, tailwind.mB2]}>
               {t('login.welcome_to')}
             </Text>
@@ -512,34 +532,42 @@ useEffect(()=> {
               </Text>
               
             </TouchableOpacity>
-            <View > 
-                       <TouchableOpacity onPress={() => promptAsync()}>
-             <Text style={[tailwind.textCenter, tailwind.mT2]}>
-               <Image
-                 source={{
-                   //uri: "https://developers.google.com/static/identity/images/branding_guideline_sample_nt_sq_lg.svg",
-                   uri:"https://tamilcommunityapi.thirdeyeinfotech.com/images/googlesignin.png"
-                 
-                 }}
-                 style={{
-                   width: 200,
-                   height: 40,
-                   borderRadius: 5, // Optional for rounded corners
-                   shadowColor: "#000",
-                   shadowOffset: { width: 0, height: 2 },
-                   shadowOpacity: 0.3,
-                   shadowRadius: 3,
-                   //elevation: 5, // For Android shadow
-                 }}
-               />
-             </Text>
-           </TouchableOpacity>
            
-                        </View>
           </View>
           
+  {/* Divider with "Continue with" text */}
+  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+    <View style={{ flex: 1, height: 1, backgroundColor: '#ccc' }} />
+    <Text style={{ marginHorizontal: 10, color: '#666', fontSize: 14 }}>Continue with</Text>
+    <View style={{ flex: 1, height: 1, backgroundColor: '#ccc' }} />
+  </View>
+  <View style={[tailwind.itemsCenter,tailwind.mB4]}>
+  {/* Google Sign-In Button */}
+  <TouchableOpacity onPress={() => promptAsync()}>
+ 
+    <Image
+      source={require('@/assets/images/google.png')}
+      style={{
+        width: 50, // Set equal width and height for a circle
+        height: 50, // Set equal width and height for a circle
+        borderRadius: 25,
+        resizeMode: 'contain', // Half of width/height to make it circular
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        //elevation: 5, // For Android shadow
+      }}
+    />
+  
+</TouchableOpacity>
+</View>
           {/* Create Account Link */}
           <View style={[tailwind.itemsCenter, tailwind.mB8]}>
+
+
+
+            
             <Text style={[tailwind.textBlue800]}>
               <Text
                 style={[tailwind.textBlue600, tailwind.fontBold]}

@@ -84,7 +84,7 @@
   },
   "routeTitles": {
     "aid": "Grievance",
-    "newsMagazine": "News Magazine",
+    "newsMagazine": "News & Magazine",
     "chatSupport": "Chat Support",
     "editProfile": "Edit Profile",
     "login": "Login",
@@ -583,7 +583,9 @@
       "incompleteDetails": "Incomplete Details",
       "fillBasicDetails": "Please fill in your basic details to continue",
       "fillphone":"Please enter your phone number",
-        "fillpassword":"Please enter your password"
+        "fillpassword":"Please enter your password",
+       "registerwithus": "Please register with us to become a member.",
+       "googleLoginFailed": "Failed to login with Google"
     }
   },
   "chatSupport": {
@@ -608,7 +610,9 @@
   },
   "apiMessages": {
     "confirmAccount": "Please confirm your account from the link sent to your mailid",
-    "invalidCredentials": "Invalid credentials"
+    "invalidCredentials": "Invalid credentials",
+    "notRegistered": "You are not registered with us. Please register to continue."
+
   },
   "alerts": {
     "error": "Error",
@@ -770,7 +774,8 @@
     "accountCreated": "Account created successfully!",
     "userAlreadyExists": "A user with this email already exists",
     "somethingWentWrong": "Something went wrong. Please try again",
-    "networkError": "Network error. Please check your connection and try again"
+    "networkError": "Network error. Please check your connection and try again",
+    "mobileNumberInvalidLength": "Please enter a valid Mobile Number"
   },
   "aid": {
     "communityNews": "Malaysia News",

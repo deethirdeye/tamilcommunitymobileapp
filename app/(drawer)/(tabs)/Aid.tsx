@@ -37,28 +37,60 @@ const Aid = () => {
   }, []);
 
   const fetchNews = async () => {
+    setIsLoading(true);
+  
+    const urls = [
+      'https://api.rss2json.com/v1/api.json?rss_url=https://www.thestar.com.my/rss/News',
+      'https://feed2json.org/convert?url=https://www.thestar.com.my/rss/News',
+    ];
+  
+    let data;
+    let error;
+  
     try {
-      const response = await fetch(
-        'https://api.rss2json.com/v1/api.json?rss_url=https://www.thestar.com.my/rss/News'
-        //'https://feed2json.org/convert?url=https://www.thestar.com.my/rss/News'
-      );
-
-      const data = await response.json();
-
-      if (data.items && Array.isArray(data.items)) {
-        const formattedNews: NewsItem[] = data.items.map((item: any) => ({
-          id: item.guid,
-          title: item.title,
-          description: item.description,
-          source: 'The Star Malaysia',
-          url: item.link,
-          publishedAt: new Date(item.pubDate).toLocaleDateString(),
-        }));
-
-        setNews(formattedNews);
+      const response = await fetch(urls[0]);
+      if (!response.ok) throw new Error('Failed to fetch from first URL');
+      data = await response.json();
+    } catch (err) {
+      error = err;
+      console.error('Error fetching from first URL:', err);
+  
+      try {
+        const response = await fetch(urls[1]);
+        if (!response.ok) throw new Error('Failed to fetch from second URL');
+        data = await response.json();
+      } catch (err) {
+        error = err;
+        console.error('Error fetching from second URL:', err);
       }
-    } catch (error) {
-      console.error('Error fetching RSS:', error);
+    }
+  
+    // Debug API response
+    console.log('API Response:', data);
+  
+    if (data && data.items && Array.isArray(data.items)) {
+      const formattedNews: NewsItem[] = data.items.map((item: any) => {
+        // Handle missing or invalid pubDate
+        let formattedDate = 'Unknown';
+        if (item.pubDate) {
+          const parsedDate = new Date(item.pubDate);
+          if (!isNaN(parsedDate.getTime())) {
+            formattedDate = parsedDate.toLocaleDateString();
+          }
+        }
+  
+        return {
+          id: item.guid || item.link, // Use link as fallback if guid is missing
+          title: item.title || 'No Title',
+          description: item.description || 'No description available',
+          source: 'The Star Malaysia',
+          url: item.link || '#',
+          publishedAt: formattedDate,
+        };
+      });
+  
+      setNews(formattedNews);
+    } else {
       setNews([
         {
           id: '1',
@@ -69,10 +101,11 @@ const Aid = () => {
           publishedAt: new Date().toLocaleDateString(),
         },
       ]);
-    } finally {
-      setIsLoading(false);
     }
+  
+    setIsLoading(false);
   };
+  
 
   
 
