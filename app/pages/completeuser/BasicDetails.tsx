@@ -17,10 +17,11 @@ const BasicDetails: React.FC = () => {
 
   const fullNameString = Array.isArray(FullName) ? FullName[0] : FullName || '';
   const emailString = Array.isArray(Email) ? Email[0] : Email || '';
-  const mobileNumberString = Array.isArray(mobileNumber) ? mobileNumber[0] : mobileNumber || '';
+  const initialMobileNumber = Array.isArray(mobileNumber) ? mobileNumber[0] : mobileNumber || '';
 
   const [currentLocation, setCurrentLocation] = useState(formData.basicDetails?.currentLocation || '');
   const [dob, setDob] = useState(formData.basicDetails?.dob || '');
+  const [mobile, setMobile] = useState(initialMobileNumber);
 
   useEffect(() => {
     (async () => {
@@ -35,9 +36,28 @@ const BasicDetails: React.FC = () => {
     })();
   }, []);
 
+  const handleMobileChange = (text: string) => {
+    // Allow only + and numbers
+    const cleaned = text.replace(/[^0-9+]/g, '');
+    
+    // Ensure it starts with +
+    if (text && !text.startsWith('+')) {
+      setMobile('+' + cleaned);
+    } else {
+      setMobile(cleaned);
+    }
+  };
+
+  const validateMobileNumber = (number: string) => {
+    // Regex for + followed by 2-digit country code and then 6-14 digits
+    const mobileRegex = /^\+[0-9]{2}[0-9]{6,14}$/;
+    return mobileRegex.test(number);
+  };
+
   const handleDobChange = (text: string) => {
     const digits = text.replace(/\D/g, '');
     let formattedDate = '';
+  
     if (digits.length <= 2) {
       formattedDate = digits;
     } else if (digits.length <= 4) {
@@ -45,12 +65,37 @@ const BasicDetails: React.FC = () => {
     } else {
       formattedDate = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}`;
     }
+  
+    if (formattedDate.length === 10) {
+      const [day, month, year] = formattedDate.split('/').map(Number);
+      const enteredDate = new Date(year, month - 1, day);
+    
+      // Reset today's date to midnight to compare only the date part
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+    
+      // Show error if the entered date is today or in the future
+      if (enteredDate.getTime() >= today.getTime()) {
+        Alert.alert(t('alert.attention'), t('basicDetails.errorFutureDate'));
+        return;
+      }
+    }
+    
+  
     setDob(formattedDate);
   };
-
+  
   const handleNext = () => {
     if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dob)) {
       Alert.alert(t('alert.attention'), t('basicDetails.errorDateFormat'));
+      return;
+    }
+
+    if (!validateMobileNumber(mobile)) {
+      Alert.alert(
+        t('alert.attention'),
+        t('basicDetails.errorMobileFormat') || 'Mobile number must start with + followed by 2-digit country code and then 6-14 digits'
+      );
       return;
     }
 
@@ -59,7 +104,7 @@ const BasicDetails: React.FC = () => {
       basicDetails: {
         fullName: fullNameString,
         email: emailString,
-        mobileNumber: mobileNumberString,
+        mobileNumber: mobile,
         dob,
         currentLocation,
       },
@@ -104,10 +149,13 @@ const BasicDetails: React.FC = () => {
               />
               <TextInput
                 style={[styles.input, tailwind.mB4]}
-                placeholder={t('basicDetails.mobileNumber')}
+                placeholder={t('basicDetails.mobileNumber') + ' (+12025550123)'}
                 placeholderTextColor="#718096"
-                value={mobileNumberString}
-                editable={false}
+                value={mobile}
+                onChangeText={handleMobileChange}
+                keyboardType="phone-pad"
+                maxLength={15}
+                editable={false} // +XX plus up to 13 digits
               />
               <TextInput
                 style={[styles.input, tailwind.mB4]}
@@ -115,13 +163,6 @@ const BasicDetails: React.FC = () => {
                 placeholderTextColor="#718096"
                 value={dob}
                 onChangeText={handleDobChange}
-              />
-              <TextInput
-                style={[styles.input]}
-                placeholder={t('basicDetails.currentLocation')}
-                placeholderTextColor="#718096"
-                value={currentLocation}
-                editable={false}
               />
             </View>
 

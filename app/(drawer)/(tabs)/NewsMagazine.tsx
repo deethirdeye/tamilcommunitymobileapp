@@ -87,9 +87,9 @@ const NewsMagazine = () => {
           ))}
         </View>
         {/* Additional Information */}
-        <Text style={[tailwind.textSm, tailwind.textBlue600, tailwind.textCenter, tailwind.mT8, tailwind.mB12]}>
+        {/* <Text style={[tailwind.textSm, tailwind.textBlue600, tailwind.textCenter, tailwind.mT8, tailwind.mB12]}>
           {t('newsMagazine.additionalInfo')}
-        </Text>
+        </Text> */}
       </ScrollView>
     </LinearGradient>
   );

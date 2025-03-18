@@ -1,95 +1,92 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, TextInput, FlatList, Animated, BackHandler } from "react-native";
-import { tailwind } from "react-native-tailwindcss";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { useRouter, useLocalSearchParams, Href } from "expo-router";
-import useTranslation from "@/app/i8n/useTranslationHook";
-import { Audio } from "expo-av";
+"use client"
+
+import { useEffect, useRef, useState } from "react"
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, Animated, BackHandler } from "react-native"
+import { tailwind } from "react-native-tailwindcss"
+import Ionicons from "@expo/vector-icons/Ionicons"
+import { useRouter, useLocalSearchParams } from "expo-router"
+import useTranslation from "@/app/i8n/useTranslationHook"
+import { Audio } from "expo-av"
 // import Slider from "@react-native-community/slider";
-import { LinearGradient } from 'expo-linear-gradient';
-import PageHeader from "@/components/PageHeader";
-import * as DocumentPicker from 'expo-document-picker';
-import { TamilCommunityApi } from "@/app/context/GlobalContext";
-import { AppConfig } from "@/app/config/AppConfig";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDescriptionAndRecordingHandlers } from '@/components/handlers/DescriptionAndRecordingHandlers';
-import DescriptionInput from "@/components/DescriptionInput";
+import { LinearGradient } from "expo-linear-gradient"
+import PageHeader from "@/components/PageHeader"
+import { TamilCommunityApi } from "@/app/context/GlobalContext"
+import { AppConfig } from "@/app/config/AppConfig"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useDescriptionAndRecordingHandlers } from "@/components/handlers/DescriptionAndRecordingHandlers"
+import DescriptionInput from "@/components/DescriptionInput"
 
 // Add this interface for the comment request
 interface CommentRequest {
-  RequestID: string;
-  CommenterCode: string;
-  Comment: string;
-  AdminUserFlg: 0;
-  Status: 0;
-  CommentID: 0;
-  Name: string;
-  CreatedOn: string;
-  AttachementPath: string;
-  RecordingPath: string;
-  LastModifiedBy: string;
+  RequestID: string
+  CommenterCode: string
+  Comment: string
+  AdminUserFlg: 0
+  Status: 0
+  CommentID: 0
+  Name: string
+  CreatedOn: string
+  AttachementPath: string
+  RecordingPath: string
+  LastModifiedBy: string
 }
 
 // Define the interface for request details
 interface RequestDetails {
-  RecordingPath?: string; // Optional property
-  ProcessStatus?: string;
-  CreatedOn?: string; // Example of another property
-  AidType?: string; // Example of another property
-  Description?: string;
+  RecordingPath?: string // Optional property
+  ProcessStatus?: string
+  CreatedOn?: string // Example of another property
+  AidType?: string // Example of another property
+  Description?: string
 }
 
 // Add interface for comments
 interface Comment {
-  RequestID: string;
-  CommenterCode: string;
-  Comment: string;
-  AdminUserFlg: number;
-  Status: number;
-  Name: string;
-  CreatedOn: string;
-  AttachmentPath: string | null;
-  RecordingPath: string | null;
-  LastModifiedBy: string | null;
-  CommentID: number;
+  RequestID: string
+  CommenterCode: string
+  Comment: string
+  AdminUserFlg: number
+  Status: number
+  Name: string
+  CreatedOn: string
+  AttachmentPath: string | null
+  RecordingPath: string | null
+  LastModifiedBy: string | null
+  CommentID: number
 }
 
 const AidDetails = () => {
-  const { RequestID } = useLocalSearchParams();
-  const [requestDetails, setRequestDetails] = useState<RequestDetails | null>(null);
+  const { RequestID } = useLocalSearchParams()
+  const [requestDetails, setRequestDetails] = useState<RequestDetails | null>(null)
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [duration, setDuration] = useState(0);
-  const [position, setPosition] = useState(0);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const { t } = useTranslation();
-  const router = useRouter();
-  const [newComment, setNewComment] = useState("");
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [duration, setDuration] = useState(0)
+  const [position, setPosition] = useState(0)
+  const [refreshKey, setRefreshKey] = useState(0)
+  const { t } = useTranslation()
+  const router = useRouter()
+  const [newComment, setNewComment] = useState("")
 
+  const [fullName, setFullName] = useState("")
+  const [userCode, setUserCode] = useState("")
 
-  const [fullName, setFullName] = useState("");
-  const [userCode, setUserCode] = useState("");
+  const [comments, setComments] = useState<Comment[]>([])
 
-  const [comments, setComments] = useState<Comment[]>([]);
-
-
-
-  const [aidType, setAidType] = useState("");
-  const [customAidType, setCustomAidType] = useState("");
-  const [description, setDescription] = useState("");
+  const [aidType, setAidType] = useState("")
+  const [customAidType, setCustomAidType] = useState("")
+  const [description, setDescription] = useState("")
 
   // Recording states
-  const [recording, setRecording] = useState<Audio.Recording | null>(null);
-  const [recordingStatus, setRecordingStatus] = useState<'idle' | 'recording' | 'recorded'>('idle');
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-  const [recordedUri, setRecordedUri] = useState<string | null>(null);
-  const blinkAnim = useRef(new Animated.Value(1)).current;
-  const [isRecording, setIsRecording] = useState(false);
-  const [attachments, setAttachments] = useState<any[]>([]); // Changed Attachment to any
-  const [modalVisible, setModalVisible] = useState(false);
-  const [userId, setUserId] = useState<string | number | null>(null);
-
+  const [recording, setRecording] = useState<Audio.Recording | null>(null)
+  const [recordingStatus, setRecordingStatus] = useState<"idle" | "recording" | "recorded">("idle")
+  const [sound, setSound] = useState<Audio.Sound | null>(null)
+  const [recordedUri, setRecordedUri] = useState<string | null>(null)
+  const blinkAnim = useRef(new Animated.Value(1)).current
+  const [isRecording, setIsRecording] = useState(isRecording)
+  const [attachments, setAttachments] = useState<any[]>([]) // Changed Attachment to any
+  const [modalVisible, setModalVisible] = useState(false)
+  const [userId, setUserId] = useState<string | number | null>(null)
 
   const handlers = useDescriptionAndRecordingHandlers({
     userId,
@@ -108,145 +105,139 @@ const AidDetails = () => {
     setIsRecording,
     setModalVisible,
     setRecording,
-    setSound
-  });
+    setSound,
+  })
   useEffect(() => {
     const fetchUserId = async () => {
       try {
-        const storedUserId = await AsyncStorage.getItem('userId');
-        setUserId(Number(storedUserId));
+        const storedUserId = await AsyncStorage.getItem("userId")
+        setUserId(Number(storedUserId))
       } catch (error) {
-        console.error("Failed to fetch userId:", error);
+        console.error("Failed to fetch userId:", error)
       }
-    };
-    fetchUserId();
-  }, []);
+    }
+    fetchUserId()
+  }, [])
 
   useEffect(() => {
     const fetchUserId = async () => {
       try {
-        const storedUserId = await AsyncStorage.getItem('userId');
-        setUserId(Number(storedUserId));
+        const storedUserId = await AsyncStorage.getItem("userId")
+        setUserId(Number(storedUserId))
       } catch (error) {
-        console.error("Failed to fetch userId:", error);
+        console.error("Failed to fetch userId:", error)
       }
-    };
-    fetchUserId();
-    
+    }
+    fetchUserId()
+
     // Handle the back button press when recording
     const backAction = () => {
-      if (recordingStatus === 'recording') {
-        Alert.alert(
-          t('login.alerts.attention'),
-          t('trackAidDetailsSelf.actionDisabled'),
-          [{ text: t('trackAidDetailsSelf.yes') }]
-        );
-        return true;  // Prevent the back action
+      if (recordingStatus === "recording") {
+        Alert.alert(t("login.alerts.attention"), t("trackAidDetailsSelf.actionDisabled"), [
+          { text: t("trackAidDetailsSelf.yes") },
+        ])
+        return true // Prevent the back action
       } else {
-        return false;  // Allow the back action
+        return false // Allow the back action
       }
-    };
+    }
 
-    BackHandler.addEventListener('hardwareBackPress', backAction);
+    BackHandler.addEventListener("hardwareBackPress", backAction)
 
     return () => {
       // Clean up the listener on component unmount
-      BackHandler.removeEventListener('hardwareBackPress', backAction);
-    };
-  }, [recordingStatus]);
+      BackHandler.removeEventListener("hardwareBackPress", backAction)
+    }
+  }, [recordingStatus])
   // Fetch aid request details by RequestID
   useEffect(() => {
     if (RequestID) {
       const fetchRequestDetails = async () => {
         try {
           const response = await fetch(
-            `${AppConfig.APIURL}${TamilCommunityApi.GET_BASIC_AID_BY_REQUEST_ID}/${RequestID}`
-          );
-          const result = await response.json();
+            `${AppConfig.APIURL}${TamilCommunityApi.GET_BASIC_AID_BY_REQUEST_ID}/${RequestID}`,
+          )
+          const result = await response.json()
 
           if (response.ok && result.ResponseData) {
-            setRequestDetails(result.ResponseData[0][0]); // Ensure this includes RecordingPath
+            setRequestDetails(result.ResponseData[0][0]) // Ensure this includes RecordingPath
           } else {
-            Alert.alert(t('trackAidDetailsSelf.error'), t('trackAidDetailsSelf.cancelRequestMessage'));
+            Alert.alert(t("trackAidDetailsSelf.error"), t("trackAidDetailsSelf.cancelRequestMessage"))
           }
         } catch (error) {
-          Alert.alert(t('trackAidDetailsSelf.error'), t('trackAidDetailsSelf.networkError'));
+          Alert.alert(t("trackAidDetailsSelf.error"), t("trackAidDetailsSelf.networkError"))
         }
-      };
+      }
 
-      fetchRequestDetails();
+      fetchRequestDetails()
     }
-  }, [RequestID, refreshKey]);
-
+  }, [RequestID, refreshKey])
 
   useEffect(() => {
     const fetchUserCode = async () => {
       try {
-        const storedUserCode = await AsyncStorage.getItem("UserCode");
-        console.log("AsyncUserCode from AsyncStorage:", storedUserCode);
-        setUserCode(storedUserCode || ""); // Set to empty string if null
+        const storedUserCode = await AsyncStorage.getItem("UserCode")
+        console.log("AsyncUserCode from AsyncStorage:", storedUserCode)
+        setUserCode(storedUserCode || "") // Set to empty string if null
       } catch (error) {
-        console.error("Failed to fetch usercode from AsyncStorage:", error);
+        console.error("Failed to fetch usercode from AsyncStorage:", error)
       }
-    };
+    }
 
-    fetchUserCode();
-  }, []);
+    fetchUserCode()
+  }, [])
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const storedFullName = await AsyncStorage.getItem("FullName");
-        console.log("AsyncUserCode from AsyncStorage:", storedFullName);
-        setFullName(storedFullName || "");
+        const storedFullName = await AsyncStorage.getItem("FullName")
+        console.log("AsyncUserCode from AsyncStorage:", storedFullName)
+        setFullName(storedFullName || "")
       } catch (error) {
-        console.error("Failed to fetch userId from AsyncStorage:", error);
+        console.error("Failed to fetch userId from AsyncStorage:", error)
       }
-    };
+    }
 
-    fetchUser();
-  }, []);
+    fetchUser()
+  }, [])
   // Handle cancel request
   const handleCancelRequest = async () => {
     Alert.alert(
-      t('trackAidDetailsSelf.confirmCancelTitle'), // Title for the alert
-      t('trackAidDetailsSelf.confirmCancelMessage'), // Message for the alert
+      t("trackAidDetailsSelf.confirmCancelTitle"), // Title for the alert
+      t("trackAidDetailsSelf.confirmCancelMessage"), // Message for the alert
       [
         {
-          text: t('trackAidDetailsSelf.no'), // No button
+          text: t("trackAidDetailsSelf.no"), // No button
           onPress: () => console.log("Cancel request canceled"),
           style: "cancel",
         },
         {
-          text: t('trackAidDetailsSelf.yes'), // Yes button
+          text: t("trackAidDetailsSelf.yes"), // Yes button
           onPress: async () => {
             try {
-              const response = await fetch(
-                `${AppConfig.APIURL}/api/Aid/CancelAidRequest?requestId=${RequestID}`,
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                }
-              );
-              const result = await response.json();
-              setRefreshKey(prevKey => prevKey + 1);
+              const response = await fetch(`${AppConfig.APIURL}/api/Aid/CancelAidRequest?requestId=${RequestID}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              })
+              const result = await response.json()
+              setRefreshKey((prevKey) => prevKey + 1)
               if (response.ok && result.ResponseMessage) {
-                Alert.alert(t('trackAidDetailsSelf.success'), t('trackAidDetailsSelf.cancelRequestSuccess'));
+                Alert.alert(t("trackAidDetailsSelf.success"), t("trackAidDetailsSelf.cancelRequestSuccess"))
                 //router.push("/RequestAid" as unknown as Href);
-              } 
+              }
               // else {
               //   Alert.alert(t('trackAidDetailsSelf.error'), t('trackAidDetailsSelf.cancelRequestMessage'));
               // }
             } catch (error) {
-              Alert.alert(t('trackAidDetailsSelf.error'), t('trackAidDetailsSelf.networkError'));
+              Alert.alert(t("trackAidDetailsSelf.error"), t("trackAidDetailsSelf.networkError"))
             }
           },
         },
       ],
-      { cancelable: true }
-    );
-  };
+      { cancelable: true },
+    )
+  }
 
   // Audio playback functions
   const playAudio = async () => {
@@ -255,79 +246,75 @@ const AidDetails = () => {
         if (sound) {
           if (isPlaying) {
             // Pause the sound and reset position
-            await sound.stopAsync();
-            await sound.setPositionAsync(0);
-            setIsPlaying(false);
+            await sound.stopAsync()
+            await sound.setPositionAsync(0)
+            setIsPlaying(false)
           } else {
             // Play the sound
-            await sound.playAsync();
-            setIsPlaying(true);
+            await sound.playAsync()
+            setIsPlaying(true)
           }
         } else {
           // Create a new sound instance
           const { sound: newSound } = await Audio.Sound.createAsync(
             { uri: requestDetails.RecordingPath },
-            { shouldPlay: true }
-          );
-          setSound(newSound);
-          setIsPlaying(true);
-  
+            { shouldPlay: true },
+          )
+          setSound(newSound)
+          setIsPlaying(true)
+
           // Handle playback completion
           newSound.setOnPlaybackStatusUpdate((status) => {
-            if (status && status.isLoaded && 'didJustFinish' in status && status.didJustFinish) {
-              setIsPlaying(false);
+            if (status && status.isLoaded && "didJustFinish" in status && status.didJustFinish) {
+              setIsPlaying(false)
             }
-          });
+          })
         }
       } catch (error) {
-        console.error("Error playing audio:", error);
-        Alert.alert("Error", "Failed to play audio");
+        console.error("Error playing audio:", error)
+        Alert.alert("Error", "Failed to play audio")
       }
     } else {
-      Alert.alert("Error", "No audio file available to play.");
+      Alert.alert("Error", "No audio file available to play.")
     }
-  };
+  }
   useEffect(() => {
     return () => {
       if (sound) {
-        sound.unloadAsync();
+        sound.unloadAsync()
       }
-    };
-  }, [sound]);
-  
-  
-
+    }
+  }, [sound])
 
   const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
-    const istDate = new Date(date.getTime() + istOffset);
-    const formattedDate = istDate.toLocaleDateString('en-GB');
-    const formattedTime = istDate.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
+    const date = new Date(dateString)
+    const istOffset = 5.5 * 60 * 60 * 1000 // 5.5 hours in milliseconds
+    const istDate = new Date(date.getTime() + istOffset)
+    const formattedDate = istDate.toLocaleDateString("en-GB")
+    const formattedTime = istDate.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
       hour12: true,
-    });
-    return `${formattedDate} ${formattedTime}`;
-  };
-
+    })
+    return `${formattedDate} ${formattedTime}`
+  }
 
   const onStartRecord = async () => {
     try {
-      await Audio.requestPermissionsAsync();
+      await Audio.requestPermissionsAsync()
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
-      });
+      })
       // const { recording } = await Audio.Recording.createAsync(
       //   Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
       // );
-      setIsRecording(true);
-      setRecordedUri(null);
+      setIsRecording(true)
+      setRecordedUri(null)
     } catch (err) {
-      console.error('Failed to start recording', err);
+      console.error("Failed to start recording", err)
     }
-  };
+  }
 
   // const onStopRecord = async () => {
   //   try {
@@ -342,185 +329,176 @@ const AidDetails = () => {
 
   const startRecording = async () => {
     try {
-      const { status } = await Audio.requestPermissionsAsync();
-      if (status !== 'granted') {
-        throw new Error(t('alerts.recordingPermissionError'));
+      const { status } = await Audio.requestPermissionsAsync()
+      if (status !== "granted") {
+        throw new Error(t("alerts.recordingPermissionError"))
       }
-  
+
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
-      });
-  
+      })
+
       const recordingOptions: Audio.RecordingOptions = {
         android: {
-          extension: '.m4a',
+          extension: ".m4a",
           sampleRate: 44100,
           numberOfChannels: 2,
           bitRate: 128000,
           outputFormat: Audio.AndroidOutputFormat.MPEG_4,
-          audioEncoder: Audio.AndroidAudioEncoder.AAC
+          audioEncoder: Audio.AndroidAudioEncoder.AAC,
         },
         ios: {
-          extension: '.m4a',
+          extension: ".m4a",
           linearPCMBitDepth: 16,
           linearPCMIsBigEndian: false,
           linearPCMIsFloat: false,
           sampleRate: 44100,
           numberOfChannels: 2,
           bitRate: 128000,
-          audioQuality: Audio.IOSAudioQuality.HIGH
+          audioQuality: Audio.IOSAudioQuality.HIGH,
         },
         web: {
           mimeType: "audio/m4a",
-          bitsPerSecond: 128000
-        }
-      };
-  
-      const { recording } = await Audio.Recording.createAsync(recordingOptions);
-      setRecording(recording);
-      setRecordingStatus('recording');
-     
+          bitsPerSecond: 128000,
+        },
+      }
+
+      const { recording } = await Audio.Recording.createAsync(recordingOptions)
+      setRecording(recording)
+      setRecordingStatus("recording")
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : t('alerts.unknownError');
-      Alert.alert(t('alerts.failedToStartRecording'), errorMessage);
+      const errorMessage = error instanceof Error ? error.message : t("alerts.unknownError")
+      Alert.alert(t("alerts.failedToStartRecording"), errorMessage)
     }
-  };
+  }
   const stopRecording = async () => {
     try {
-      await recording?.stopAndUnloadAsync();
-      const uri = recording?.getURI();
-      setRecording(null);
-      setRecordingStatus('recorded');
+      await recording?.stopAndUnloadAsync()
+      const uri = recording?.getURI()
+      setRecording(null)
+      setRecordingStatus("recorded")
       if (uri) {
-        setRecordedUri(uri);
-        blinkAnim.setValue(1);
-        const { sound } = await Audio.Sound.createAsync({ uri });
-        setSound(sound);
+        setRecordedUri(uri)
+        blinkAnim.setValue(1)
+        const { sound } = await Audio.Sound.createAsync({ uri })
+        setSound(sound)
       } else {
-        setRecordedUri(null);
+        setRecordedUri(null)
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : t('alerts.unknownError');
-      Alert.alert(t('alerts.failedToStartRecording'), errorMessage);
+      const errorMessage = error instanceof Error ? error.message : t("alerts.unknownError")
+      Alert.alert(t("alerts.failedToStartRecording"), errorMessage)
     }
-  };
+  }
 
   const toggleRecording = async () => {
     try {
-      if (recordingStatus === 'recording') {
-        await stopRecording();
-        setIsRecording(false);
+      if (recordingStatus === "recording") {
+        await stopRecording()
+        setIsRecording(false)
       } else {
-        await startRecording();
-        setIsRecording(true);
-       
-        setRecordingStatus('recording');
+        await startRecording()
+        setIsRecording(true)
+
+        setRecordingStatus("recording")
       }
     } catch (error) {
-      console.error('Error toggling recording:', error);
-      Alert.alert(t('alerts.error'), t('alerts.failedToStartRecording'));
+      console.error("Error toggling recording:", error)
+      Alert.alert(t("alerts.error"), t("alerts.failedToStartRecording"))
     }
-  };
-
+  }
 
   const removeAttachment = (id: string) => {
-    setAttachments(prevAttachments => prevAttachments.filter(attachment => attachment.id !== id));
-  };
+    setAttachments((prevAttachments) => prevAttachments.filter((attachment) => attachment.id !== id))
+  }
 
   const handlePlayRecording = async (recordingPath: string | null) => {
     if (!recordingPath) {
-      Alert.alert("Error", "No recording file available to play.");
-      return;
+      Alert.alert("Error", "No recording file available to play.")
+      return
     }
-  
+
     try {
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        { uri: recordingPath },
-        { shouldPlay: true }
-      );
-  
+      const { sound: newSound } = await Audio.Sound.createAsync({ uri: recordingPath }, { shouldPlay: true })
+
       // Play the sound
-      await newSound.playAsync();
-  
+      await newSound.playAsync()
+
       // Handle playback completion
       newSound.setOnPlaybackStatusUpdate((status) => {
-        if (status && status.isLoaded && 'didJustFinish' in status && status.didJustFinish) {
-          console.log("Playback finished");
+        if (status && status.isLoaded && "didJustFinish" in status && status.didJustFinish) {
+          console.log("Playback finished")
         }
-      });
+      })
     } catch (error) {
-      console.error("Error playing recording:", error);
-      Alert.alert("Error", "Failed to play recording");
+      console.error("Error playing recording:", error)
+      Alert.alert("Error", "Failed to play recording")
     }
-  };
+  }
 
   const sendComment = async () => {
-    if (recordingStatus === 'recording') {
-      Alert.alert(t('login.alerts.attention'),t('trackAidDetailsSelf.stopRecording'));
-      return;
+    if (recordingStatus === "recording") {
+      Alert.alert(t("login.alerts.attention"), t("trackAidDetailsSelf.stopRecording"))
+      return
     }
     if (!description.trim() && !recordedUri && attachments.length === 0) {
-      Alert.alert(t('login.alerts.attention'),t('trackAidDetailsSelf.emptyComment'));
-      return;
+      Alert.alert(t("login.alerts.attention"), t("trackAidDetailsSelf.emptyComment"))
+      return
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       // Handle file uploads if any
-      let attachmentPath = '';
-    
+      const attachmentPath = ""
 
       const uploadRecording = async () => {
         if (!recordedUri) {
-          console.error('No recording URI found.');
-          return null;
+          console.error("No recording URI found.")
+          return null
         }
-      
+
         try {
-          const fileUri = recordedUri; // Ensure this is a `file://` URI
-      
-         const formData = new FormData();
-         formData.append('audioFile', {
+          const fileUri = recordedUri // Ensure this is a `file://` URI
+
+          const formData = new FormData()
+          formData.append("audioFile", {
             uri: fileUri,
             name: `recording_${Date.now()}.m4a`,
-            type: 'audio/m4a',
-          } as any);
-          
-      
+            type: "audio/m4a",
+          } as any)
+
           const uploadResponse = await fetch(`${AppConfig.APIURL}${TamilCommunityApi.UPLOAD_RECORDING}`, {
-            method: 'POST',
+            method: "POST",
             body: formData,
             headers: {
-              'Accept': 'application/json',
+              Accept: "application/json",
             },
-          });
-      
-          if (!uploadResponse.ok) {
-            const errorData = await uploadResponse.json();
-            throw new Error(errorData.title || 'Failed to upload recording');
-          }
-      
-          const responseData = await uploadResponse.json();
-          return responseData.blobUrl;
-        } catch (error) {
-          console.error('Error in uploadRecording:', error);
-          Alert.alert('Upload Error', 'Failed to upload recording');
-          return null;
-        }
-      };
+          })
 
-      let recordingPath = null;
-      console.log(recordingStatus);
-      if (recordingStatus ==='recorded') {
-        recordingPath = await uploadRecording();
-      }
-        if (recordingStatus === 'idle') {
-          recordingPath = null;
+          if (!uploadResponse.ok) {
+            const errorData = await uploadResponse.json()
+            throw new Error(errorData.title || "Failed to upload recording")
+          }
+
+          const responseData = await uploadResponse.json()
+          return responseData.blobUrl
+        } catch (error) {
+          console.error("Error in uploadRecording:", error)
+          Alert.alert("Upload Error", "Failed to upload recording")
+          return null
         }
-console.log(recordingPath);
+      }
+
+      let recordingPath = null
+      console.log(recordingStatus)
+      if (recordingStatus === "recorded") {
+        recordingPath = await uploadRecording()
+      }
+      if (recordingStatus === "idle") {
+        recordingPath = null
+      }
+      console.log(recordingPath)
       const commentData = {
         RequestID: RequestID as string,
         CommenterCode: userCode, // Ensure userCode is set
@@ -528,65 +506,62 @@ console.log(recordingPath);
         AdminUserFlg: 0,
         AttachmentPath: attachmentPath,
         RecordingPath: recordingPath,
-      };
-console.log(commentData);
+      }
+      console.log(commentData)
       const response = await fetch(`${AppConfig.APIURL}/api/Grievance/AddComment`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(commentData),
-      });
+      })
 
-      const result = await response.json();
+      const result = await response.json()
 
       if (response.ok) {
         // Clear form
-        setNewComment("");
-        setRecordedUri(null);
-        setAttachments([]);
+        setNewComment("")
+        setDescription("")
+        setRecordedUri(null)
+        setAttachments([])
 
         // Refresh the comments list
-        setRefreshKey(prev => prev + 1);
+        setRefreshKey((prev) => prev + 1)
 
-        Alert.alert(t('login.alerts.success'), t('trackAidDetailsSelf.commentAdded'));
+        Alert.alert(t("login.alerts.success"), t("trackAidDetailsSelf.commentAdded"))
       } else {
-        Alert.alert(t('login.alerts.error'), t('trackAidDetailsSelf.errorAddingComment'));
+        Alert.alert(t("login.alerts.error"), t("trackAidDetailsSelf.errorAddingComment"))
       }
     } catch (error) {
-      console.error('Error sending comment:', error);
-      Alert.alert(t('login.alerts.error'), t('trackAidDetailsSelf.errorAddingComment'));
+      console.error("Error sending comment:", error)
+      Alert.alert(t("login.alerts.error"), t("trackAidDetailsSelf.errorAddingComment"))
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   // Add a function to fetch comments
   const fetchComments = async () => {
     try {
-      const response = await fetch(
-        `${AppConfig.APIURL}/api/Grievance/GetCommentsByRequestID/${RequestID}`
-      );
-      const result = await response.json();
+      const response = await fetch(`${AppConfig.APIURL}/api/Grievance/GetCommentsByRequestID/${RequestID}`)
+      const result = await response.json()
 
       if (response.ok && result.ResponseData) {
-        setComments(result.ResponseData[0]);
-
-
+        setComments(result.ResponseData[0])
       } else {
-        console.error('Failed to fetch comments:', result);
+        console.error("Failed to fetch comments:", result)
       }
     } catch (error) {
-      console.error('Error fetching comments:', error);
+      console.error("Error fetching comments:", error)
     }
-  };
+  }
 
   // Add useEffect to fetch comments
   useEffect(() => {
     if (RequestID) {
-      fetchComments();
+      fetchComments()
     }
-  }, [RequestID, refreshKey]);
+  }, [RequestID, refreshKey])
 
   // Helper function to format date
   // const formatDateTime = (dateString: string) => {
@@ -603,62 +578,70 @@ console.log(commentData);
   if (!requestDetails) {
     return (
       <View style={[tailwind.flex1, tailwind.justifyCenter, tailwind.itemsCenter]}>
-        <Text>{t('trackAidDetailsSelf.loading')}</Text>
+        <Text>{t("trackAidDetailsSelf.loading")}</Text>
       </View>
-    );
+    )
   }
 
   return (
     <LinearGradient
-      colors={['#E1F2FF', '#BFE6FF', '#99D6FF']}
+      colors={["#E1F2FF", "#BFE6FF", "#99D6FF"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={[tailwind.flex1]}
     >
       <ScrollView style={[tailwind.flex1]}>
-      <PageHeader
-  title={t('trackAidDetailsSelf.title')}
-  showBackButton
-  onBackButtonPress={() => {
-    if (recordingStatus === 'recording') {
-      Alert.alert(
-        t('login.alerts.attention'),
-        t('trackAidDetailsSelf.actionDisabled'),
-        [{ text: t('trackAidDetailsSelf.yes') }]
-      );
-    } else {
-      // Navigate back or perform the default back button action
-      router.back();
-    }
-  }}
-/>
-
+        <PageHeader
+          title={t("trackAidDetailsSelf.title")}
+          showBackButton
+          onBackButtonPress={() => {
+            if (recordingStatus === "recording") {
+              Alert.alert(t("login.alerts.attention"), t("trackAidDetailsSelf.actionDisabled"), [
+                { text: t("trackAidDetailsSelf.yes") },
+              ])
+            } else {
+              // Navigate back or perform the default back button action
+              router.back()
+            }
+          }}
+        />
 
         {/* Details Section */}
         <View style={[tailwind.mX6, tailwind.mY4]}>
-          <View style={[
-            tailwind.bgWhite,
-            tailwind.roundedLg,
-            tailwind.shadowLg,
-            tailwind.p6,
-            { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 5 }
-          ]}>
-            <Text style={[tailwind.textLg, tailwind.fontBold, tailwind.textBlue800]}>{t('trackAidDetailsSelf.requestId')} {RequestID}</Text>
-            <Text style={[tailwind.textBase, tailwind.mT2, tailwind.textBlue700]}>
-              {t('trackAidDetailsSelf.requestedOn')} {requestDetails.CreatedOn ? formatDateTime(requestDetails.CreatedOn) : "N/A"}
+          <View
+            style={[
+              tailwind.bgWhite,
+              tailwind.roundedLg,
+              tailwind.shadowLg,
+              tailwind.p6,
+              {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+                elevation: 5,
+              },
+            ]}
+          >
+            <Text style={[tailwind.textLg, tailwind.fontBold, tailwind.textBlue800]}>
+              {t("trackAidDetailsSelf.requestId")} {RequestID}
             </Text>
             <Text style={[tailwind.textBase, tailwind.mT2, tailwind.textBlue700]}>
-              {t('trackAidDetailsSelf.requestStatus')}
+              {t("trackAidDetailsSelf.requestedOn")}{" "}
+              {requestDetails.CreatedOn ? formatDateTime(requestDetails.CreatedOn) : "N/A"}
+            </Text>
+            <Text style={[tailwind.textBase, tailwind.mT2, tailwind.textBlue700]}>
+              {t("trackAidDetailsSelf.requestStatus")}
               <Text style={[tailwind.fontBold]}>
                 {/* </Text><Text style={[tailwind.fontBold, getStatusStyle(requestDetails.ProcessStatus)]}> */}
                 {requestDetails.ProcessStatus || "N/A"}
               </Text>
             </Text>
             <Text style={[tailwind.textBase, tailwind.mT2, tailwind.textBlue700]}>
-              {t('trackAidDetailsSelf.aidType')} {requestDetails.AidType || "N/A"}
+              {t("trackAidDetailsSelf.aidType")} {requestDetails.AidType || "N/A"}
             </Text>
             <Text style={[tailwind.textBase, tailwind.mT2, tailwind.textBlue700]}>
-              {t('trackAidDetailsSelf.description')} {requestDetails.Description || "N/A"}
+              {t("trackAidDetailsSelf.description")} {requestDetails.Description || "N/A"}
             </Text>
           </View>
 
@@ -678,11 +661,11 @@ console.log(commentData);
           <View style={[tailwind.mY4]}>
             <View style={[tailwind.bgWhite, tailwind.roundedLg, tailwind.shadowLg, tailwind.p6]}>
               <Text style={[tailwind.text2xl, tailwind.fontBold, tailwind.textBlue800, tailwind.mB4]}>
-                {t('trackAidDetailsSelf.discussions')}
+                {t("trackAidDetailsSelf.discussions")}
               </Text>
               {isLoading ? (
                 <View style={[tailwind.p4, tailwind.itemsCenter]}>
-                  <Text>{t('trackAidDetailsSelf.loadingComments')}</Text>
+                  <Text>{t("trackAidDetailsSelf.loadingComments")}</Text>
                 </View>
               ) : comments.length > 0 ? (
                 comments.map((comment) => (
@@ -693,19 +676,17 @@ console.log(commentData);
                     <Text style={[tailwind.fontBold, tailwind.textBlue700]}>
                       {comment.Name}
                       {comment.AdminUserFlg === 1 && (
-                        <Text style={[tailwind.textSm, tailwind.textGray600]}>{t('trackAidDetailsSelf.tamilCommunityTeam')}</Text>
+                        <Text style={[tailwind.textSm, tailwind.textGray600]}>
+                          {t("trackAidDetailsSelf.tamilCommunityTeam")}
+                        </Text>
                       )}
                     </Text>
-                    <Text style={[tailwind.textSm, tailwind.textGray600]}>
-                      {formatDateTime(comment.CreatedOn)}
-                    </Text>
-                    <Text style={[tailwind.mT2, tailwind.textBlue800]}>
-                      {comment.Comment}
-                    </Text>
+                    <Text style={[tailwind.textSm, tailwind.textGray600]}>{formatDateTime(comment.CreatedOn)}</Text>
+                    <Text style={[tailwind.mT2, tailwind.textBlue800]}>{comment.Comment}</Text>
                     {comment.AttachmentPath && (
                       <TouchableOpacity
                         style={[tailwind.mT2, tailwind.flexRow, tailwind.itemsCenter]}
-                      // onPress={() => handleOpenAttachment(comment.AttachmentPath)}
+                        // onPress={() => handleOpenAttachment(comment.AttachmentPath)}
                       >
                         <Ionicons name="document-attach" size={20} color="#0369A1" />
                         <Text style={[tailwind.mL2, tailwind.textBlue600]}>View Attachment</Text>
@@ -714,7 +695,7 @@ console.log(commentData);
                     {comment.RecordingPath && (
                       <TouchableOpacity
                         style={[tailwind.mT2, tailwind.flexRow, tailwind.itemsCenter]}
-                      onPress={() => handlePlayRecording(comment.RecordingPath)}
+                        onPress={() => handlePlayRecording(comment.RecordingPath)}
                       >
                         <Ionicons name="play" size={20} color="#0369A1" />
                         <Text style={[tailwind.mL2, tailwind.textBlue600]}>Play Recording</Text>
@@ -723,26 +704,26 @@ console.log(commentData);
                   </View>
                 ))
               ) : (
-                <Text style={[tailwind.textCenter, tailwind.textGray600]}>
-                  {t('trackAidDetailsSelf.noComments')}
-                </Text>
+                <Text style={[tailwind.textCenter, tailwind.textGray600]}>{t("trackAidDetailsSelf.noComments")}</Text>
               )}
             </View>
 
             {/* User Reply Section */}
             <View style={[tailwind.mT4, tailwind.bgWhite, tailwind.roundedLg, tailwind.shadowLg, tailwind.p4]}>
-              <Text style={[tailwind.textLg, tailwind.fontBold, tailwind.textBlue800, tailwind.mB2]}>{t('trackAidDetailsSelf.reply.title')}</Text>
+              <Text style={[tailwind.textLg, tailwind.fontBold, tailwind.textBlue800, tailwind.mB2]}>
+                {t("trackAidDetailsSelf.reply.title")}
+              </Text>
               <View style={styles.descriptionContainer}>
                 {/* Description Input Component */}
                 <DescriptionInput
-            description={description}
-            onDescriptionChange={setDescription}
-            recordingStatus={recordingStatus}
-            toggleRecording={toggleRecording}
-            playRecording={handlers.playRecording}
-            deleteRecording={handlers.deleteRecording}
-            pickDocument={handlers.pickDocument}
-          />
+                  description={description}
+                  onDescriptionChange={setDescription}
+                  recordingStatus={recordingStatus}
+                  toggleRecording={toggleRecording}
+                  playRecording={handlers.playRecording}
+                  deleteRecording={handlers.deleteRecording}
+                  pickDocument={handlers.pickDocument}
+                />
               </View>
               {attachments.length > 0 && (
                 <View style={[tailwind.mT2]}>
@@ -762,7 +743,9 @@ console.log(commentData);
                 onPress={sendComment}
                 // disabled={recordingStatus === 'recording'}
               >
-                <Text style={[tailwind.textBase, tailwind.fontBold, tailwind.textWhite]}>{t('trackAidDetailsSelf.reply.sendButton')}</Text>
+                <Text style={[tailwind.textBase, tailwind.fontBold, tailwind.textWhite]}>
+                  {t("trackAidDetailsSelf.reply.sendButton")}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -770,34 +753,41 @@ console.log(commentData);
           {/* Cancel Request Button */}
           {requestDetails.ProcessStatus !== "Cancelled" && (
             <TouchableOpacity
-              style={[tailwind.bgRed500, tailwind.p4, tailwind.roundedLg, tailwind.itemsCenter, tailwind.mT6, tailwind.mB10]}
+              style={[
+                tailwind.bgRed500,
+                tailwind.p4,
+                tailwind.roundedLg,
+                tailwind.itemsCenter,
+                tailwind.mT6,
+                tailwind.mB10,
+              ]}
               onPress={handleCancelRequest}
             >
               <Text style={[tailwind.textLg, tailwind.fontBold, tailwind.textWhite]}>
-                {t('trackAidDetailsSelf.cancelRequest')}
+                {t("trackAidDetailsSelf.cancelRequest")}
               </Text>
             </TouchableOpacity>
           )}
         </View>
       </ScrollView>
     </LinearGradient>
-  );
-};
+  )
+}
 
 const getStatusStyle = (status: string) => {
   switch (status) {
-    case 'Sent':
-      return tailwind.textBlue500;
-    case 'Under Review':
-      return tailwind.textYellow500;
-    case 'Accepted':
-      return tailwind.textGreen500;
-    case 'Rejected':
-      return tailwind.textRed500;
+    case "Sent":
+      return tailwind.textBlue500
+    case "Under Review":
+      return tailwind.textYellow500
+    case "Accepted":
+      return tailwind.textGreen500
+    case "Rejected":
+      return tailwind.textRed500
     default:
-      return tailwind.textGray500;
+      return tailwind.textGray500
   }
-};
+}
 
 const styles = StyleSheet.create({
   // descriptionContainer: {
@@ -818,10 +808,10 @@ const styles = StyleSheet.create({
   //   paddingRight: 40, // Make space for icons
   // },
   iconContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 8,
     right: 8,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   // iconButton: {
   //   backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -834,16 +824,17 @@ const styles = StyleSheet.create({
   //   elevation: 3,
   // },
   sendButton: {
-    backgroundColor: '#0369A1',
+    backgroundColor: "#0369A1",
     padding: 12,
     borderRadius: 8,
-    alignItems: 'center',
-  }, instructionContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    alignItems: "center",
+  },
+  instructionContainer: {
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
-    shadowColor: '#0369A1',
+    shadowColor: "#0369A1",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -852,13 +843,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     borderWidth: 1,
-    borderColor: 'rgba(3, 105, 161, 0.2)',
+    borderColor: "rgba(3, 105, 161, 0.2)",
   },
   inputContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
     marginBottom: 16,
-    shadowColor: '#0369A1',
+    shadowColor: "#0369A1",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -867,27 +858,27 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: "rgba(255, 255, 255, 0.2)",
   },
   descriptionContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     height: 200,
     borderRadius: 12,
     marginBottom: 16,
-    shadowColor: '#0369A1',
+    shadowColor: "#0369A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: "rgba(255, 255, 255, 0.2)",
   },
   descriptionInput: {
     flex: 1,
 
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: 8,
     paddingVertical: 8,
   },
@@ -897,7 +888,7 @@ const styles = StyleSheet.create({
     ...tailwind.itemsCenter,
     ...tailwind.p4,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(3, 105, 161, 0.1)',
+    borderTopColor: "rgba(3, 105, 161, 0.1)",
   },
   recordingControls: {
     ...tailwind.flexRow,
@@ -906,8 +897,8 @@ const styles = StyleSheet.create({
   iconButton: {
     ...tailwind.p2,
     ...tailwind.roundedFull,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    shadowColor: '#0369A1',
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    shadowColor: "#0369A1",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -921,7 +912,7 @@ const styles = StyleSheet.create({
     ...tailwind.p4,
     ...tailwind.roundedLg,
     ...tailwind.itemsCenter,
-    shadowColor: '#0369A1',
+    shadowColor: "#0369A1",
     shadowOffset: {
       width: 0,
       height: 4,
@@ -935,7 +926,7 @@ const styles = StyleSheet.create({
     ...tailwind.justifyEnd,
     ...tailwind.pX5,
     ...tailwind.pB5,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
   },
   modalContent: {
     ...tailwind.bgWhite,
@@ -944,11 +935,11 @@ const styles = StyleSheet.create({
     ...tailwind.itemsCenter,
   },
   attachmentsContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
     padding: 16,
     marginTop: 16,
-    shadowColor: '#0369A1',
+    shadowColor: "#0369A1",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -957,16 +948,17 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: "rgba(255, 255, 255, 0.2)",
   },
   attachmentItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(3, 105, 161, 0.1)',
+    borderBottomColor: "rgba(3, 105, 161, 0.1)",
   },
-});
+})
 
-export default AidDetails;
+export default AidDetails
+

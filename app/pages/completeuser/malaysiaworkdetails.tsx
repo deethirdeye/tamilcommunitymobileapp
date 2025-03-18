@@ -53,47 +53,58 @@ const ProfileForm = () => {
   }, [selectedState]);
 
   const handleFormDataUpdate = () => {
-    // Validation
-    if (!address) {
-      Alert.alert(t('alert.attention'), t('malaysiaWorkDetails.errorAddress'));
-      return false; // Return false if validation fails
-    }
-    if (!pinCode) { // Assuming pin code should be 5 digits
-      Alert.alert(t('alert.attention'), t('malaysiaWorkDetails.errorPinCode'));
-      return false; // Return false if validation fails
-    }
-    if (!contactPersonName) {
-      Alert.alert(t('alert.attention'), t('malaysiaWorkDetails.errorContactPersonName'));
-      return false; // Return false if validation fails
-    }
-    if (!contactPersonPhone) { // Assuming phone number should be 10 digits
-      Alert.alert(t('alert.attention'), t('malaysiaWorkDetails.errorContactPersonPhone'));
-      return false; // Return false if validation fails
-    }
-    if (!selectedState) {
-      Alert.alert(t('alert.attention'), t('malaysiaWorkDetails.errorState'));
-      return false; // Return false if validation fails
-    }
-    if (!selectedCity) {
-      Alert.alert(t('alert.attention'), t('malaysiaWorkDetails.errorCity'));
-      return false; // Return false if validation fails
-    }
+  // Validation for Address
+  if (!address) {
+    Alert.alert(t('alert.attention'), t('malaysiaWorkDetails.errorAddress'));
+    return false;
+  }
 
-    // If all validations pass, update form data
-    setFormData(prevData => ({
-      ...prevData,
-      malaysiaWorkDetails: {
-        MalaysiaWorkAddress: address,
-        MalaysiaState: selectedState,
-        MalaysiaCity: selectedCity,
-        MalaysiaPinCode: pinCode,
-        MalaysiaWorkContactPersonName: contactPersonName,
-        MalaysiaWorkContactPersonPhone: contactPersonPhone
-      }
-    }));
+  // Validation for Pin Code (5-9 digits)
+  if (!/^\d{3,9}$/.test(pinCode)) {
+    Alert.alert(t('alert.attention'), t('malaysiaWorkDetails.errorPinCodeLength'));
+    return false;
+  }
 
-    return true; // Return true if all validations pass
-  };
+  // Validation for Contact Person Name (9-20 characters, only letters and spaces)
+  if (!/^[a-zA-Z\s]{3,20}$/.test(contactPersonName)) {
+    Alert.alert(t('alert.attention'), t('malaysiaWorkDetails.errorContactPersonNameLength'));
+    return false;
+  }
+
+  // Validation for Contact Person Phone (9-20 digits)
+  if (!/^\d{9,20}$/.test(contactPersonPhone)) {
+    Alert.alert(t('alert.attention'), t('malaysiaWorkDetails.errorContactPersonPhoneLength'));
+    return false;
+  }
+
+  // Validation for State
+  if (!selectedState) {
+    Alert.alert(t('alert.attention'), t('malaysiaWorkDetails.errorState'));
+    return false;
+  }
+
+  // Validation for City
+  if (!selectedCity) {
+    Alert.alert(t('alert.attention'), t('malaysiaWorkDetails.errorCity'));
+    return false;
+  }
+
+  // If all validations pass, update form data
+  setFormData(prevData => ({
+    ...prevData,
+    malaysiaWorkDetails: {
+      MalaysiaWorkAddress: address,
+      MalaysiaState: selectedState,
+      MalaysiaCity: selectedCity,
+      MalaysiaPinCode: pinCode,
+      MalaysiaWorkContactPersonName: contactPersonName,
+      MalaysiaWorkContactPersonPhone: contactPersonPhone
+    }
+  }));
+
+  return true; // Return true if all validations pass
+};
+
 
   // Function to handle navigation
   const handleNext = () => {
@@ -251,6 +262,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 8,
   },
+  
 });
 
 export default ProfileForm;

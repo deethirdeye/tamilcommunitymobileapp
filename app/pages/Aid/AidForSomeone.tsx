@@ -15,6 +15,7 @@ import {
   BackHandler,
 } from "react-native";
 import { router } from "expo-router";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { tailwind } from "react-native-tailwindcss";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from 'expo-linear-gradient';
@@ -391,10 +392,12 @@ const AidForSomeone = () => {
   visible={aidForPickerVisible}
   transparent={true}
   animationType="slide"
+  statusBarTranslucent={true} // Add this prop
   onRequestClose={() => setAidForPickerVisible(false)}
 >
   <View style={styles.modalContainer}>
-    <View style={styles.modalContent}>
+    <SafeAreaView style={styles.modalContent}>
+      {/* Search Input */}
       <TextInput
         style={[tailwind.p2, tailwind.border, tailwind.rounded, tailwind.mB4, tailwind.textBase]}
         placeholder={t('aidForSomeone.searchAidFor')}
@@ -402,6 +405,7 @@ const AidForSomeone = () => {
         onChangeText={setSearchText}
       />
 
+      {/* ScrollView for user codes */}
       <ScrollView style={styles.scrollView}>
         {filteredUserCodes.map((item) => (
           <View
@@ -418,12 +422,12 @@ const AidForSomeone = () => {
         ))}
       </ScrollView>
 
-      {/* Add the "Not a member of Tamil Community?" text */}
-      <View style={tailwind.justifyCenter}>
+      {/* "Not a member of Tamil Community?" text */}
+      <View style={[tailwind.justifyCenter, tailwind.mT4]}>
         <Text style={[tailwind.textBase, tailwind.textGray700]}>
           {t('aidForSomeone.notTamilMember')}{" "}
           <Text
-            style={[tailwind.itemsCenter, tailwind.fontBold, tailwind.textBlue500, tailwind.underline]}
+            style={[tailwind.fontBold, tailwind.textBlue500, tailwind.underline]}
             onPress={handleEnterNonMember}
           >
             {t('aidForSomeone.enterDetails')}
@@ -431,6 +435,7 @@ const AidForSomeone = () => {
         </Text>
       </View>
 
+      {/* Done Button */}
       <TouchableOpacity
         style={[tailwind.bgBlue500, tailwind.p4, tailwind.roundedLg, tailwind.itemsCenter, tailwind.mT5]}
         onPress={handleDone}
@@ -439,7 +444,7 @@ const AidForSomeone = () => {
           {t('aidForSomeone.buttons.done')}
         </Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   </View>
 </Modal>
 
@@ -586,11 +591,12 @@ const styles = StyleSheet.create({
     ...tailwind.roundedLg,
     ...tailwind.itemsCenter,
     ...tailwind.mX4,
-    height: "70%",
-    maxHeight: "80%",
+    flexGrow: 1, // Allow the content to grow
+    maxHeight: '90%',
   },
   scrollView: {
     ...tailwind.maxH48,
+    flexGrow: 0,
   },
   userItem: {
     padding: 16,

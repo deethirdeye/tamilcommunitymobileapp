@@ -110,7 +110,7 @@ const Aid = () => {
   
 
   const renderNewsSection = () => (
-    <View style={[tailwind.p4, styles.newsSection]}>
+    <View style={[tailwind.p4, styles.newsSection,tailwind.mB12]}>
       <Text style={[tailwind.text2xl, tailwind.fontBold, tailwind.textBlue900, tailwind.mB4]}>
         {t('aid.communityNews')}
       </Text>

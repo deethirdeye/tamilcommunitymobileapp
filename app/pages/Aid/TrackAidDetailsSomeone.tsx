@@ -56,7 +56,7 @@ interface RequestDetails {
   AidType?: string; // Example of another property
   FullName?: string;
   ProcessStatus?: string
-
+AidForname?: string;
   Description?: string;
 }
 
@@ -391,33 +391,7 @@ const AidDetails = () => {
       Alert.alert(t('alerts.error'), t('alerts.failedToStartRecording'));
     }
   };
-  // const onStartRecord = async () => {
-  //   try {
-  //     await Audio.requestPermissionsAsync();
-  //     await Audio.setAudioModeAsync({
-  //       allowsRecordingIOS: true,
-  //       playsInSilentModeIOS: true,
-  //     });
-  //     const { recording } = await Audio.Recording.createAsync(
-  //       Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-  //     );
-  //     setIsRecording(true);
-  //     setRecordedUri(null);
-  //   } catch (err) {
-  //     console.error('Failed to start recording', err);
-  //   }
-  // };
-
-  // const onStopRecord = async () => {
-  //   try {
-  //     setIsRecording(false);
-  //     await recording.stopAndUnloadAsync();
-  //     const uri = recording.getURI();
-  //     setRecordedUri(uri);
-  //   } catch (err) {
-  //     console.error('Failed to stop recording', err);
-  //   }
-  // };
+  
   const handlePlayRecording = async (recordingPath: string | null) => {
     if (!recordingPath) {
       Alert.alert("Error", "No recording file available to play.");
@@ -491,19 +465,6 @@ const AidDetails = () => {
         copyToCacheDirectory: false,
       });
 
-      // if (result.type === 'success') {
-      //   if (result.size && result.size > 50 * 1024 * 1024) {
-      //     Alert.alert("File Too Large", "Please select a file smaller than 50MB.");
-      //   } else {
-      //     const newAttachment: Attachment = {
-      //       id: Date.now().toString(),
-      //       name: result.name,
-      //       size: result.size,
-      //       uri: result.uri,
-      //     };
-      //     setAttachments(prevAttachments => [...prevAttachments, newAttachment]);
-      //   }
-      // }
     } catch (err) {
       console.error(err);
       Alert.alert("Error", "An error occurred while picking the document. Please try again.");
@@ -559,6 +520,7 @@ const AidDetails = () => {
       if (response.ok) {
         // Clear form
         setNewComment("");
+        setDescription("");
         setRecordedUri(null);
         setAttachments([]);
 

@@ -44,36 +44,48 @@ const NativeDetails = () => {
   }, [selectedState]);
 
   const handleFormDataUpdate = () => {
-    // Validation
+    // Validation for Address
     if (!address) {
       Alert.alert(t('alert.attention'), t('nativeDetails.errorAddress'));
-      return false; // Return false if validation fails
+      return false;
     }
-    if (!pinCode) { // Assuming pin code should be 5 digits
-      Alert.alert(t('alert.attention'), t('nativeDetails.errorPinCode'));
-      return false; // Return false if validation fails
+  
+    // Validation for Pin Code (5-9 digits)
+    if (!/^\d{3,9}$/.test(pinCode)) { 
+      Alert.alert(t('alert.attention'), t('nativeDetails.errorPinCodeLength'));
+      return false;
     }
-    if (!contactPersonName) {
-      Alert.alert(t('alert.attention'), t('nativeDetails.errorContactPersonName'));
-      return false; // Return false if validation fails
+  
+    // Validation for Contact Person Name (9-20 characters, only letters and spaces)
+    if (!/^[a-zA-Z\s]{3,20}$/.test(contactPersonName)) {
+      Alert.alert(t('alert.attention'), t('nativeDetails.errorContactPersonNameLength'));
+      return false;
     }
-    if (!contactPersonPhone) { // Assuming phone number should be 10 digits
-      Alert.alert(t('alert.attention'), t('nativeDetails.errorContactPersonPhone'));
-      return false; // Return false if validation fails
+  
+    // Validation for Contact Person Phone (9-20 digits)
+    if (!/^\d{9,12}$/.test(contactPersonPhone)) {
+      Alert.alert(t('alert.attention'), t('nativeDetails.errorContactPersonPhoneLength'));
+      return false;
     }
+  
+    // Validation for Country
     if (!selectedCountry) {
       Alert.alert(t('alert.attention'), t('nativeDetails.errorCountry'));
-      return false; // Return false if validation fails
+      return false;
     }
+  
+    // Validation for State
     if (!selectedState) {
       Alert.alert(t('alert.attention'), t('nativeDetails.errorState'));
-      return false; // Return false if validation fails
+      return false;
     }
+  
+    // Validation for City
     if (!selectedCity) {
       Alert.alert(t('alert.attention'), t('nativeDetails.errorCity'));
-      return false; // Return false if validation fails
+      return false;
     }
-
+  
     // If all validations pass, update form data
     setFormData(prevData => ({
       ...prevData,
@@ -87,10 +99,10 @@ const NativeDetails = () => {
         nativeContactPersonPhone: contactPersonPhone
       }
     }));
-
+  
     return true; // Return true if all validations pass
   };
-
+  
   // Function to handle navigation
   const handleNext = () => {
     const isValid = handleFormDataUpdate(); // Call validation function

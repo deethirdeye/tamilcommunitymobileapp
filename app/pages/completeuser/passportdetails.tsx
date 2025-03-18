@@ -79,38 +79,119 @@ const ProfileForm = () => {
     loadToken();
   }, []);
 
+  // Function to format and validate date input
+  const handleDateInput = (text: string, setDate: (value: string) => void, isIssueDate: boolean = true) => {
+    const digits = text.replace(/\D/g, '');
+    let formattedDate = '';
+
+    if (digits.length <= 2) {
+      formattedDate = digits;
+    } else if (digits.length <= 4) {
+      formattedDate = `${digits.slice(0, 2)}/${digits.slice(2)}`;
+    } else {
+      formattedDate = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}`;
+    }
+
+    if (formattedDate.length === 10) {
+      const [day, month, year] = formattedDate.split('/').map(Number);
+      const enteredDate = new Date(year, month - 1, day);
+
+      // Reset today's date to midnight to compare only the date part
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (isIssueDate) {
+        // Validate that the issue date is not in the future
+        if (enteredDate.getTime() >= today.getTime()) {
+          Alert.alert(t('alert.attention'), t('basicDetails.errorFutureDate'));
+          return;
+        }
+      } else {
+        // Validate that the expiry date is after the issue date
+        const issueDate = new Date(dateOfIssue.split('/').reverse().join('-'));
+        if (enteredDate.getTime() <= issueDate.getTime()) {
+          Alert.alert(t('alert.attention'), t('passportDetails.errorExpiryBeforeIssue'));
+          return;
+        }
+      }
+    }
+
+    setDate(formattedDate);
+  };
+
   const handleFormDataUpdate = async () => {
-    setIsRegistering(true);
-    // Validation
+    // Validation for Passport Number
     if (!passportNumber) {
       Alert.alert(t('alert.attention'), t('passportDetails.errorPassportNumber'));
       return false;
     }
+    if (!/^[a-zA-Z0-9]{5,15}$/.test(passportNumber)) {
+      Alert.alert(t('alert.attention'), t('employerDetails.errorIDNumberFormat'));
+      return false;
+    }
+
+    // Validation for Surname
     if (!surname) {
       Alert.alert(t('alert.attention'), t('passportDetails.errorSurname'));
       return false;
     }
+
+    // Validation for Given Names
     if (!givenNames) {
       Alert.alert(t('alert.attention'), t('passportDetails.errorGivenNames'));
       return false;
     }
+
+    // Validation for Nationality
     if (!nationality) {
       Alert.alert(t('alert.attention'), t('passportDetails.errorNationality'));
       return false;
     }
+
+    // Validation for Date of Issue
     if (!dateOfIssue) {
       Alert.alert(t('alert.attention'), t('passportDetails.errorDateOfIssue'));
       return false;
     }
+
+    // Validation for Date of Expiry
     if (!dateOfExpiry) {
       Alert.alert(t('alert.attention'), t('passportDetails.errorDateOfExpiry'));
       return false;
     }
+
+    // Validation for Place of Issue
     if (!placeOfIssue) {
       Alert.alert(t('alert.attention'), t('passportDetails.errorPlaceOfIssue'));
       return false;
     }
 
+    
+
+    // Parse the dateOfIssue and dateOfExpiry
+    const issueDate = new Date(dateOfIssue.split('/').reverse().join('-'));
+    const expiryDate = new Date(dateOfExpiry.split('/').reverse().join('-'));
+    const currentDate = new Date();
+
+    // Reset time part to compare only the date
+    currentDate.setHours(0, 0, 0, 0);
+    issueDate.setHours(0, 0, 0, 0);
+    expiryDate.setHours(0, 0, 0, 0);
+
+    // Check if dateOfIssue is in the future
+    if (issueDate > currentDate) {
+      Alert.alert(t('alert.attention'), t('passportDetails.errorFutureDateOfIssue'));
+      return false;
+    }
+
+    // Check if dateOfExpiry is before dateOfIssue
+    if (expiryDate <= issueDate) {
+      Alert.alert(t('alert.attention'), t('passportDetails.errorExpiryBeforeIssue'));
+      return false;
+    }
+
+    // If all validations pass, proceed with form submission
+    setIsRegistering(true);
     const newPassportDetails = {
       PassportNumber: passportNumber,
       Surname: surname,
@@ -227,13 +308,14 @@ const ProfileForm = () => {
                 placeholder={t('passportDetails.dateOfIssue')}
                 keyboardType="numeric"
                 value={dateOfIssue}
-                onChangeText={setDateOfIssue}
+                onChangeText={(text) => handleDateInput(text, setDateOfIssue, true)}
               />
               <TextInput
                 style={[styles.input, tailwind.mB4]}
                 placeholder={t('passportDetails.dateOfExpiry')}
+                keyboardType="numeric"
                 value={dateOfExpiry}
-                onChangeText={setDateOfExpiry}
+                onChangeText={(text) => handleDateInput(text, setDateOfExpiry, false)}
               />
               <TextInput
                 style={[styles.input, tailwind.mB4]}
@@ -246,7 +328,9 @@ const ProfileForm = () => {
               style={styles.button}
               onPress={handleFormDataUpdate}
             >
-              <Text style={styles.buttonText}>      {isRegistering ? t('passportDetails.registering') :  t('passportDetails.next')}</Text>
+              <Text style={styles.buttonText}>
+                {isRegistering ? t('passportDetails.registering') : t('passportDetails.next')}
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

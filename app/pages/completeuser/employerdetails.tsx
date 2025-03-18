@@ -52,40 +52,54 @@ const EmployerDetails = () => {
   }, [selectedState]);
 
   const handleFormDataUpdate = () => {
-    // Validation
-    if (!employerFullName) {
-      Alert.alert(t('alert.attention'), t('employerDetails.errorFullName'));
-      return false; // Return false if validation fails
+    // Validation for Employer Full Name (9-20 characters, only letters and spaces)
+    if (!/^[a-zA-Z\s]{3,20}$/.test(employerFullName)) {
+      Alert.alert(t('alert.attention'), t('employerDetails.errorFullNameLength'));
+      return false;
     }
-    if (!companyName) {
+  
+    // Validation for Company Name
+     if (!/^[a-zA-Z\s]{3,20}$/.test(companyName)) {
       Alert.alert(t('alert.attention'), t('employerDetails.errorCompanyName'));
-      return false; // Return false if validation fails
+      return false;
     }
-    if (!mobileNumber) { // Assuming mobile number should be 10 digits
-      Alert.alert(t('alert.attention'), t('employerDetails.errorMobileNumber'));
-      return false; // Return false if validation fails
+  
+    // Validation for Mobile Number (9-20 digits)
+    if (!/^\d{9,20}$/.test(mobileNumber)) {
+      Alert.alert(t('alert.attention'), t('employerDetails.errorMobileNumberLength'));
+      return false;
     }
-    if (!idNumber) {
-      Alert.alert(t('alert.attention'), t('employerDetails.errorIDNumber'));
-      return false; // Return false if validation fails
+  
+    // Validation for ID Number (Alphanumeric, 5-15 characters)
+    if (!/^[a-zA-Z0-9]{5,15}$/.test(idNumber)) {
+      Alert.alert(t('alert.attention'), t('employerDetails.errorIDNumberFormat'));
+      return false;
     }
+  
+    // Validation for Employer Address
     if (!employerAddress) {
       Alert.alert(t('alert.attention'), t('employerDetails.errorAddress'));
-      return false; // Return false if validation fails
+      return false;
     }
+  
+    // Validation for State
     if (!selectedState) {
       Alert.alert(t('alert.attention'), t('employerDetails.errorState'));
-      return false; // Return false if validation fails
+      return false;
     }
+  
+    // Validation for City
     if (!selectedCity) {
       Alert.alert(t('alert.attention'), t('employerDetails.errorCity'));
-      return false; // Return false if validation fails
+      return false;
     }
-    if (!pinCode) { // Assuming pin code should be 5 digits
-      Alert.alert(t('alert.attention'), t('employerDetails.errorPinCode'));
-      return false; // Return false if validation fails
+  
+    // Validation for Pin Code (5-9 digits)
+    if (!/^\d{3,9}$/.test(pinCode)) {
+      Alert.alert(t('alert.attention'), t('employerDetails.errorPinCodeLength'));
+      return false;
     }
-
+  
     // If all validations pass, update form data
     setFormData(prevData => ({
       ...prevData,
@@ -101,9 +115,10 @@ const EmployerDetails = () => {
         EmployerCountry: "Malaysia"
       }
     }));
-
+  
     return true; // Return true if all validations pass
   };
+  
 
   // Function to handle navigation
   const handleNext = () => {
@@ -130,9 +145,9 @@ const EmployerDetails = () => {
             <Text style={[tailwind.textBlue800, tailwind.fontBold, tailwind.text2xl, tailwind.mB2]}>
               {t('employerDetails.employerDetails')}
             </Text>
-            <Text style={[tailwind.textBlue600, tailwind.textLg, tailwind.mB4]}>
+            {/* <Text style={[tailwind.textBlue600, tailwind.textLg, tailwind.mB4]}>
               {t('employerDetails.employerDetails')}
-            </Text>
+            </Text> */}
 
             <TextInput
               style={[styles.input, tailwind.mB4]}

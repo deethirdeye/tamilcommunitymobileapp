@@ -136,7 +136,7 @@
     "quarterly": "Quarterly Subscription",
     "halfYearly": "Half Yearly Subscription",
     "annually": "Annual Subscription",
-    "amount": "{amount} MYR",
+    "amount": "{amount} RM",
     "selectPaymentMethod": "Select Payment Method",
     "paymentMethods": {
       "paypal": "PayPal",
@@ -162,7 +162,7 @@
     "annually": "Annual Subscription",
     "annuallyDesc": "Save 20% with 12 months access",
     "additionalInfo": "All subscriptions include unlimited access to archived content",
-    "currency": "MYR",
+    "currency": "RM",
     "selectPlan": "Select Plan"
   },
   "trackAidDetailsSelf1": {
@@ -199,16 +199,20 @@
   },
   "expenseTable": {
     "backButton": "Back",
+    "FilterbyStatus": "Filter by Status",
     "trackerTitle": "Grievance Tracker",
     "searchPlaceholder": "Search by Request ID",
-    "allStatuses": "All Statuses",
+    "allStatuses": "All Status",
     "statusSent": "Sent",
     "statusUnderReview": "Under Review",
     "statusHold": "On Hold",
+    "statusOnHold": "On Hold",
     "statusAccepted": "Completed",
+    "statusCompleted": "Completed",
     "statusRejected": "Denied",
+    "statusDenied": "Denied",
     "trackerForSelf": "Tracker for Self",
-    "columnSlNo": "Sl.No",
+    "columnSlNo": "S.No",
     "columnDate": "Date",
     "columnReqID": "Req. ID",
     "columnType": "Type",
@@ -297,6 +301,18 @@
     "alreadyAddedDetails": "Already added Non Member Details? ",
     "nextPage": "Next Page"
   },
+  "validations": {
+    "fullNameRequired": "Full Name is required.",
+    "fullNameMinLength": "Full Name must be between 3-20 characters.",
+    "emailRequired": "Email is required.",
+    "emailInvalid": "Please enter a valid email address.",
+    "mobileInvalid": "Please enter a valid Mobile number.",
+    "mobileNumberRequired": "Mobile Number is required.",
+    "mobileNumberInvalid": "Please enter a valid mobile number.",
+    "emergencyContactPersonNameRequired": "Emergency Contact Person Name is required.",
+    "emergencyContactNumberRequired": "Emergency Contact Number is required.",
+    "emergencyContactNumberInvalid": "Please enter a valid emergency contact number."
+  },
   "aidForSomeone1": {
     "aidComplaint": "Aid/Complaint",
     "aidForSomeone": "Aid/Complaint for Someone",
@@ -343,22 +359,28 @@
     "currentLocation": "Current Location",
     "nextButton": "Next →",
     "errorDateFormat": "Please enter the date in DD/MM/YYYY format.",
-    "permissionDenied": "Permission to access location was denied"
+    "permissionDenied": "Permission to access location was denied",
+    "errorFutureDate": "You can enter a date in the past only.",
+    "errorMobileFormat":"Date should be in DD/MM/YYYY format."
   },
   
     "emergencyDetails": {
       "completeProfile": "Complete Your Profile",
       "personalDetails": "Personal Details",
       "emergencyDetails": "Emergency Contact Details",
-      "malaysiaEmergencyContactName": "Malaysia Emergency Contact Name",
+      "malaysiaEmergencyContactName": "Malaysia Emergency Contact Person Name",
       "malaysiaEmergencyPhone": "Malaysia Emergency Phone Number",
-      "otherEmergencyContactName": "Other Emergency Contact Name",
-      "otherEmergencyPhone": "Other Emergency Phone Number",
-      "nextButton": "Next",
+      "otherEmergencyContactName": "Other Emergency Contact Person Name",
+      "otherEmergencyPhone": "Other Emergency Contact Phone Number",
+      "nextButton": "Next →",
       "errorContactName": "Please enter Malaysia emergency contact name.",
       "errorEmergencyPhone": "Please enter Malaysia emergency phone number.",
       "errorOtherContactName": "Please enter other emergency contact name.",
-      "errorOtherEmergencyPhone": "Please enter other emergency phone number."
+      "errorOtherEmergencyPhone": "Please enter other emergency phone number.",
+      "errorContactNameLength": "Malaysia  contact name must be between 3 to 20 characters.",
+      "errorEmergencyPhoneLength": "Malaysia Emergency phone number must be between 9 to 20 digits.",
+      "errorOtherContactNameLength": "Other emergency contact name must be between 3 to 20 characters.",
+      "errorOtherEmergencyPhoneLength": "Other emergency phone number must be between 9 to 20 digits."
     ,
     "alert": {
       "attention": "Attention"
@@ -379,14 +401,18 @@
     "pinCode": "Pin Code",
     "next": "Next →",
     "errorFullName": "Please enter the employer's full name.",
-    "errorCompanyName": "Please enter the company name.",
     "errorMobileNumber": "Please enter a valid mobile number.",
     "errorIDNumber": "Please enter a valid ID number.",
-    "errorAddress": "Please enter the employer's address.",
-    "errorState": "Please select a state.",
-    "errorCity": "Please select a city.",
-    "errorPinCode": "Please enter a valid pin code."
-  },
+    "errorPinCode": "Please enter a valid pin code.",
+     "errorFullNameLength": "Employer full name must be between 3 to 20 characters.",
+    "errorCompanyName": "Company name must be between 3 to 20 characters.",
+    "errorMobileNumberLength": "Mobile number must be between 9 to 20 digits.",
+    "errorIDNumberFormat": "ID number must be alphanumeric and between 5 to 15 characters.",
+    "errorAddress": "Employer address is required.",
+    "errorState": "State selection is required.",
+    "errorCity": "City selection is required.",
+    "errorPinCodeLength": "Pin code must be between 3 to 9 digits."
+    },
   "malaysiaDetails": {
     "completeProfile": "Complete your Profile",
     "personalDetails": "Personal Details",
@@ -403,25 +429,31 @@
     "errorContactPersonName": "Please enter the contact person's name.",
     "errorContactPersonPhone": "Please enter a valid phone number.",
     "errorState": "Please select a state.",
-    "errorCity": "Please select a city."
+    "errorCity": "Please select a city.",
+    "errorPinCodeLength": "Pin code must be between 3 to 9 digits.",
+    "errorContactPersonNameLength": "Contact person name must be between 3 to 20 characters.",
+    "errorContactPersonPhoneLength": "Contact person phone number must be between 9 to 12 digits."
   },
   "malaysiaWorkDetails": {
     "completeProfile": "Complete your Profile",
     "personalDetails": "Personal Details",
-    "malaysiaWorkDetails": "Malaysia Work Details",
-    "malaysiaWorkAddress": "Malaysia Work Address",
+    "malaysiaWorkDetails": "Malaysia Workplace Details",
+    "malaysiaWorkAddress": "Malaysia Workplace Address",
     "selectState": "Select State",
     "selectCity": "Select City",
     "pinCode": "Pin Code",
-    "contactPersonName": "Malaysia Work Contact Person Name",
-    "contactPersonPhone": "Malaysia Work Contact Person Phone",
+    "contactPersonName": "Malaysia Workplace Contact Person Name",
+    "contactPersonPhone": "Malaysia Workpalce Contact Person Phone",
     "next": "Next →",
     "errorAddress": "Please enter your work address.",
     "errorPinCode": "Please enter a valid pin code.",
     "errorContactPersonName": "Please enter the contact person's name.",
     "errorContactPersonPhone": "Please enter a valid phone number.",
     "errorState": "Please select a state.",
-    "errorCity": "Please select a city."
+    "errorCity": "Please select a city.",
+    "errorPinCodeLength": "Pin code must be between 3 to 9 digits.",
+    "errorContactPersonNameLength": "Contact person name must be between 3 to 20 characters.",
+    "errorContactPersonPhoneLength": "Contact person phone number must be between 9 to 20 digits."
   },
   "nativeDetails": {
     "completeProfile": "Complete your Profile",
@@ -441,7 +473,10 @@
     "errorContactPersonPhone": "Please enter a valid phone number.",
     "errorCountry": "Please select a country.",
     "errorState": "Please select a state.",
-    "errorCity": "Please select a city."
+    "errorCity": "Please select a city.",
+    "errorPinCodeLength": "Pin code must be between 3 to 9 digits.",
+    "errorContactPersonNameLength": "Contact Name must be between 3 to 20 characters.",
+    "errorContactPersonPhoneLength": "Phone number must be between 9 to 12 digits."
   },
   
     "passportDetails": {
@@ -454,16 +489,27 @@
       "dateOfIssue": "Date of Issue",
       "dateOfExpiry": "Date of Expiry",
       "placeOfIssue": "Place of Issue",
-      "next": "Next",
+      "next": "Next →",
       "registering": "Registering...",
       "errorPassportNumber": "Please enter your passport number.",
-      "errorSurname": "Please enter your surname.",
-      "errorGivenNames": "Please enter your given names.",
-      "errorNationality": "Please enter your nationality.",
-      "errorDateOfIssue": "Please enter the date of issue.",
-      "errorDateOfExpiry": "Please enter the date of expiry.",
-      "errorPlaceOfIssue": "Please enter the place of issue.",
-      "errorLogin": "Your session has expired. Please log in again.",
+      "errorIssueDateFuture": "Issue date cannot be in the future",
+    "errorExpiryBeforeIssue": "Date of expiry must be later than date of issue",
+
+   
+    "errorPassportNumberFormat": "Passport number must be 6-9 alphanumeric characters without special characters.",
+    "errorSurname": "Please enter your surname.",
+    "errorSurnameFormat": "Surname should contain only letters and spaces.",
+    "errorGivenNames": "Please enter your given names.",
+    "errorGivenNamesFormat": "Given names should contain only letters and spaces.",
+    "errorNationality": "Please enter your nationality.",
+    "errorNationalityFormat": "Nationality should contain only letters and spaces.",
+    "errorDateOfIssue": "Please enter the date of issue.",
+    "errorDateOfExpiry": "Please enter the date of expiry.",
+    "errorDateFormat": "Date should be in DD/MM/YYYY format.",
+    "errorFutureDate": "Date cannot be in the future.",
+    "errorPlaceOfIssue": "Please enter the place of issue.",
+    "errorPlaceOfIssueFormat": "Place of issue should contain only letters and spaces.",
+    "errorLogin": "You need to be logged in to continue.",
       "alert": {
       "attention": "Attention"
     }
@@ -476,7 +522,7 @@
   "paymen1t": {
     "title": "Newspapers & Magazines",
     "pdfVersions": "PDF Versions of Tamil News Papers and Magazines",
-    "costLabel": "{cost}.00 MYR",
+    "costLabel": "{cost}.00 RM",
     "paypal": "PayPal",
     "paypalDescription": "You will be redirected to PayPal website to complete your order securely.",
     "ipay88": "IPay88",
@@ -557,7 +603,7 @@
     "annually": "Annual Subscription",
     "annuallyDesc": "Save 20% with 12 months access",
     "additionalInfo": "All subscriptions include unlimited access to archived content",
-    "currency": "MYR",
+    "currency": "RM",
     "selectPlan": "Select Plan"
   },
   "login": {
@@ -685,7 +731,7 @@
     },
     "toasts": {
       "resendSuccess": "Verification email resent successfully.",
-      "resendFailed": "Failed to resend the verification email.",
+      "resendFailed": "Account Already Verified",
       "error": "An error occurred while resending the email."
     }
   },

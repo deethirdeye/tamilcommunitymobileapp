@@ -2,7 +2,7 @@
   "app": {
     "aid": "உதவி/புகார்",
     "news": "செய்திகள் & முறைப்படுத்தல்",
-    "chatSupport": "அழைப்பு ஆதரவு",
+    "chatSupport": "வாடிக்கையாளர் ஆதரவு",
     "editProfile": "மாற்று சுயவிவரம்",
     "login": "உள்நுழை",
     "logout": "வெளியேறு",
@@ -29,12 +29,12 @@
   },
   "chatSupport1": {
     "title": "வாட்ஸ்அப் மூலம் எங்களுடன் தொடர்பு கொள்ளுங்கள்",
-    "goToChat": "அரட்டைக்கு செல்லவும்",
+    "goToChat": "வாடிக்கையாளர் க்கு செல்லவும்",
     "redirectMessage": "நீங்கள் வாட்ஸ்அப்பிற்கு மறுஉருவாக்கப்படுவீர்கள்",
     "done": "முடிந்தது"
   },
   "aidForm": {
-    "title": "புகார் அளிக்க",
+    "title": "மனக்குறை",
     "quickGuide": {
       "title": "விரைவு வழிகாட்டி",
       "steps": {
@@ -73,7 +73,7 @@
     }
   },
   "aidForSomeone": {
-    "title": "பிறருக்கான உதவி",
+    "title": "பிறருக்கான மனக்குறை",
     "quickGuide": {
       "title": "விரைவு வழிகாட்டி",
       "steps": {
@@ -123,10 +123,10 @@
   },
   "newsMagazine1": {
     "title": "தமிழ் செய்தி தாள்கள் மற்றும் இதழ்களின் PDF பதிப்புகள்",
-    "monthly": "மாதாந்து 10 MYR",
-    "quarterly": "மூன்று மாதம் 30 MYR",
-    "halfYearly": "அரையாண்டு 60 MYR",
-    "annually": "ஆண்டாந்து 120 MYR"
+    "monthly": "மாதாந்து RM 10",
+    "quarterly": "மூன்று மாதம் RM 30",
+    "halfYearly": "அரையாண்டு RM 60",
+    "annually": "ஆண்டாந்து RM 120"
   },
   "payment": {
     "title": "செய்தித்தாள்கள் & மாத இதழ்கள்",
@@ -135,11 +135,11 @@
     "quarterly": "காலாண்டு சந்தா",
     "halfYearly": "அரையாண்டு சந்தா",
     "annually": "வருடாந்திர சந்தா",
-    "amount": "{amount} MYR",
+    "amount": "{amount} RM",
     "selectPaymentMethod": "கட்டண முறையைத் தேர்ந்தெடுக்கவும்",
     "paymentMethods": {
       "paypal": "பேபால்",
-      "paypalDescription": "பங்கள் ஆர்டரை பாதுகாப்பாக முடிக்க பேபால் இணையதளத்திற்கு மாற்றப்படுவீர்கள்",
+      "paypalDescription": "உங்கள் ஆர்டரை பாதுகாப்பாக முடிக்க பேபால் இணையதளத்திற்கு மாற்றப்படுவீர்கள்",
       "ipay88": "IPay88",
       "ipay88Description": "உங்கள் ஆர்டரை பாதுகாப்பாக முடிக்க IPay88 இணையதளத்திற்கு மாற்றப்படுவர்கள்.",
       "bankTransfer": "வங்கி பரிமாற்றம்",
@@ -182,14 +182,18 @@
   },
   "expenseTable": {
     "backButton": "மீண்டும்",
+    "FilterbyStatus": "நிலையின்படி வடிகட்டவும்",
     "trackerTitle": "புகார் கண்டறிதல்",
-    "searchPlaceholder": "அரசு கோரிக்கை ஐடியைக் கொண்டு தேடுங்கள்",
+    "searchPlaceholder": "கோரிக்கை ஐடி மூலம் தேடவும்",
     "allStatuses": "அனைத்து நிலைகளும்",
     "statusSent": "அனுப்பப்பட்டது",
     "statusUnderReview": "சரிபார்க்கப்படுகிறது",
     "statusHold": "நெருங்கிய நிலை",
+    "statusOnHold": "நெருங்கிய நிலை",
     "statusAccepted": "ஏற்றுக்கொள்ளப்பட்டது",
+    "statusCompleted": "ஏற்றுக்கொள்ளப்பட்டது",
     "statusRejected": "மறைக்கப்பட்டது",
+    "statusDenied": "மறைக்கப்பட்டது",
     "trackerForSelf": "சுயமான கண்டறிதல்",
     "columnSlNo": "வரிசை எண்",
     "columnDate": "தேதி",
@@ -223,7 +227,7 @@
     "PinCode": "பின்கோடு",
     "ContactPersonName": "தொடர்பு நபரின் பெயர்",
     "ContactPersonPhone": "தொடர்பு நபரின் தொலைபேசி",
-    "MalaysiaResidenceDetails": "மலேஷியாவில் வசிக்கும் விவரங்கள்",
+    "MalaysiaResidenceDetails": "மலேசியாவில் வசிக்கும் விவரங்கள்",
     "ResidenceAddress": "வசிக்கும் முகவரி",
     "MalaysiaResidenceCity": "மலேசியா நகரம்",
     "MalaysiaResidenceState": "மலேசியா மாநிலம்",
@@ -331,9 +335,20 @@
     "alreadyAddedDetails": "முன்உறுப்பினரின் விவரங்கள் சேர்க்கப்பட்டதா? ",
     "nextPage": "அடுத்த பக்கம்"
   },
+  "validations": {
+    "fullNameRequired": "முழு பெயர் தேவை.",
+    "fullNameMinLength": "முழு பெயர் 3 முதல் 20 எழுத்துகள் இருக்க வேண்டும்.",
+    "emailRequired": "மின்னஞ்சல் தேவை.",
+    "emailInvalid": "சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்.",
+    "mobileNumberRequired": "கைபேசி எண் தேவை.",
+    "mobileNumberInvalid": "சரியான கைபேசி எண்ணை உள்ளிடவும்.",
+    "emergencyContactPersonNameRequired": "அவசர தொடர்பு நபரின் பெயர் தேவை.",
+    "emergencyContactNumberRequired": "அவசர தொடர்பு எண் தேவை.",
+    "emergencyContactNumberInvalid": "சரியான அவசர தொடர்பு எண்ணை உள்ளிடவும்."
+  },
   "aidForSomeoneNonMember": {
-    "pageTitle": "உறுப்பினர் அல்லாதவருக்கான மனுக்குறை",
-    "grievanceFor": "யாருக்கான மனுக்குறை?",
+    "pageTitle": "உறுப்பினர் அல்லாதவருக்கான மனக்குறை",
+    "grievanceFor": "யாருக்கான மனக்குறை?",
     "selectAidFor": "உதவி தேவைப்படுபவரைத் தேர்ந்தெடுக்கவும்",
     "searchPlaceholder": "உதவி தேவைப்படுபவரை தேடுக",
     "memberQuestion": "தமிழ் சமூக உறுப்பினருக்கு உதவி தேவையா?",
@@ -362,9 +377,9 @@
     }
   },
   "routeTitles": {
-    "aid": "மனுக்குறை",
+    "aid": "மனக்குறை",
     "newsMagazine": "செய்தி இதழ்",
-    "chatSupport": "அரட்டை ஆதரவு",
+    "chatSupport": "வாடிக்கையாளர்  ஆதரவு",
     "editProfile": "சுயவிவரத்தை திருத்து",
     "login": "உள்நுழைய",
     "logout": "வெளியேறு"
@@ -415,7 +430,9 @@
     "currentLocation": "தற்போதைய இடம்",
     "nextButton": "அடுத்தது →",
     "errorDateFormat": "DD/MM/YYYY வடிவத்தில் தேதியை உள்ளிடவும்.",
-    "permissionDenied": "இடத்திற்கான அனுமதி மறுக்கப்பட்டது"
+    "permissionDenied": "இடத்திற்கான அனுமதி மறுக்கப்பட்டது",
+    "errorFutureDate": "நீங்கள் கடந்த காலத்தில் உள்ள தேதியை மட்டுமே உள்ளிடலாம்.",
+     "errorMobileFormat":"DD/MM/YYYY வடிவத்தில் தேதியை உள்ளிடவும்."
   },
   
     "emergencyDetails": {
@@ -426,11 +443,15 @@
       "malaysiaEmergencyPhone": "மலேசியா அவசர தொலைபேசி எண்",
       "otherEmergencyContactName": "மற்ற அவசர தொடர்பு பெயர்",
       "otherEmergencyPhone": "மற்ற அவசர தொலைபேசி எண்",
-      "nextButton": "அடுத்தது",
+      "nextButton": "அடுத்த →",
       "errorContactName": "மலேசியா அவசர தொடர்பு பெயரை உள்ளிடவும்.",
       "errorEmergencyPhone": "மலேசியா அவசர தொலைபேசி எண்ணை உள்ளிடவும்.",
       "errorOtherContactName": "மற்ற அவசர தொடர்பு பெயரை உள்ளிடவும்.",
-      "errorOtherEmergencyPhone": "மற்ற அவசர தொலைபேசி எண்ணை உள்ளிடவும்."
+      "errorOtherEmergencyPhone": "மற்ற அவசர தொலைபேசி எண்ணை உள்ளிடவும்.",
+      "errorContactNameLength": "அவசர தொடர்பு பெயர் 3 முதல் 20 எழுத்துகள் இருக்க வேண்டும்.",
+      "errorEmergencyPhoneLength": "அவசர தொலைபேசி எண் 9 முதல் 20 இலக்கங்கள் இருக்க வேண்டும்.",
+      "errorOtherContactNameLength": "மற்றொரு அவசர தொடர்பு பெயர் 3 முதல் 20 எழுத்துகள் இருக்க வேண்டும்.",
+      "errorOtherEmergencyPhoneLength": "மற்றொரு அவசர தொலைபேசி எண் 9 முதல் 20 இலக்கங்கள் இருக்க வேண்டும்."
     ,
     "alert": {
       "attention": "கவனம்"
@@ -451,53 +472,64 @@
     "pinCode": "பின் குறியீடு",
     "next": "அடுத்தது →",
     "errorFullName": "தொழிலாளியின் முழு பெயரை உள்ளிடவும்.",
-    "errorCompanyName": "கம்பெனியின் பெயரை உள்ளிடவும்.",
     "errorMobileNumber": "சரியான கைபேசி எண்ணை உள்ளிடவும்.",
     "errorIDNumber": "சரியான அடையாள எண்ணை உள்ளிடவும்.",
-    "errorAddress": "தொழிலாளியின் முகவரியை உள்ளிடவும்.",
-    "errorState": "ஒரு மாநிலத்தை தேர்ந்தெடுக்கவும்.",
-    "errorCity": "ஒரு நகரத்தை தேர்ந்தெடுக்கவும்.",
     "errorPinCode": "சரியான பின் குறியீட்டை உள்ளிடவும்.",
     "errorContactName": "அவசர தொடர்பாளர் பெயர் தேவை.",
     "errorEmergencyPhone": "அவசர தொலைபேசி எண் தேவை.",
     "errorOtherContactName": "மற்ற அவசர தொடர்பாளர் பெயர் தேவை.",
-    "errorOtherEmergencyPhone": "மற்ற அவசர தொலைபேசி எண் தேவை."
+    "errorOtherEmergencyPhone": "மற்ற அவசர தொலைபேசி எண் தேவை.",
+    "errorFullNameLength": "நிறுவனர் முழு பெயர் 3 முதல் 20 எழுத்துகள் இருக்க வேண்டும் மற்றும் எழுத்துக்கள் மற்றும் இடைவெளிகள் மட்டுமே இருக்க வேண்டும்.",
+    "errorCompanyName": "நிறுவனத்தின் பெயர் 3 முதல் 20 எழுத்துகள் இருக்க வேண்டும்.",
+    "errorMobileNumberLength": "மொபைல் எண் 9 முதல் 20 இலக்கங்கள் இருக்க வேண்டும்.",
+    "errorIDNumberFormat": "ID எண் அகர-எண் கலந்ததாக இருக்க வேண்டும் மற்றும் 5 முதல் 15 எழுத்துகள் இருக்க வேண்டும்.",
+    "errorAddress": "நிறுவனர் முகவரி தேவை.",
+    "errorState": "மாநிலத்தை தேர்வு செய்ய வேண்டும்.",
+    "errorCity": "நகரத்தை தேர்வு செய்ய வேண்டும்.",
+    "errorPinCodeLength": "பின் குறியீடு 3 முதல் 9 இலக்கங்கள் இருக்க வேண்டும்."
   },
   "malaysiaDetails": {
     "completeProfile": "உங்கள் மொத்த விவரங்களை முடிக்கவும்",
     "personalDetails": "தனிப்பட்ட விவரங்கள்",
-    "malaysiaResidenceDetails": "மலேஷியா வசிப்பிட விவரங்கள்",
-    "malaysiaResidenceAddress": "மலேஷியா வசிப்பிட முகவரி",
+    "malaysiaResidenceDetails": "மலேசியா வசிப்பிட விவரங்கள்",
+    "malaysiaResidenceAddress": "மலேசியா வசிப்பிட முகவரி",
     "selectState": "மாநிலத்தை தேர்வு செய்யவும்",
     "selectCity": "நகரத்தை தேர்வு செய்யவும்",
     "pinCode": "அஞ்சல் குறியீடு",
-    "contactPersonName": "மலேஷியா வசிப்பிட தொடர்பு நபர் பெயர்",
-    "contactPersonPhone": "மலேஷியா வசிப்பி தொடர்பு நபர் தொலைபேசி",
+    "contactPersonName": "மலேசியா வசிப்பிட தொடர்பு நபர் பெயர்",
+    "contactPersonPhone": "மலேசியா வசிப்பி தொடர்பு நபர் தொலைபேசி",
     "next": "அடுத்த →",
     "errorAddress": "உங்கள் முகவரியை உள்ளிடவும்.",
     "errorPinCode": "சரியான பின் குறியீட்டை உள்ளிடவும்.",
     "errorContactPersonName": "தொடர்பு நபரின் பெயரை உள்ளிடவும்.",
     "errorContactPersonPhone": "சரியான தொலைபேசி எண்ணை உள்ளிடவும்.",
     "errorState": "ஒரு மாநிலத்தை தேர்ந்தெடுக்கவும்.",
-    "errorCity": "ஒரு நகரத்தை தேர்ந்தெடுக்கவும்."
+    "errorCity": "ஒரு நகரத்தை தேர்ந்தெடுக்கவும்.",
+    "errorPinCodeLength": "அஞ்சல் குறியீடு 3 முதல் 9 இலக்கங்கள் இருக்க வேண்டும்.",
+    "errorContactPersonNameLength": "தொடர்பு நபர் பெயர் 3 முதல் 20 எழுத்துகள் இருக்க வேண்டும்.",
+    "errorContactPersonPhoneLength": "தொடர்பு நபர் தொலைபேசி எண் 9 முதல் 12 இலக்கங்கள் இருக்க வேண்டும்."
+  
   },
   "malaysiaWorkDetails": {
     "completeProfile": "உங்கள் மொத்த விவரங்களை முடிக்கவும்",
     "personalDetails": "தனிப்பட்ட விவரங்கள்",
-    "malaysiaWorkDetails": "மலேஷியா வேலை விவரங்கள்",
-    "malaysiaWorkAddress": "மலேஷியா வேலை முகவரி",
+    "malaysiaWorkDetails": "மலேசியா வேலை விவரங்கள்",
+    "malaysiaWorkAddress": "மலேசியா வேலை முகவரி",
     "selectState": "மாநிலத்தை தேர்வு செய்யவும்",
     "selectCity": "நகரத்தை தேர்வு செய்யவும்",
     "pinCode": "அஞ்சல் குறியீடு",
-    "contactPersonName": "மலேஷியா வேலை தொடர்பு நபர் பெயர்",
-    "contactPersonPhone": "மலேஷியா வேலை தொடர்பு நபர் தொலைபேசி",
+    "contactPersonName": "மலேசியா வேலை தொடர்பு நபர் பெயர்",
+    "contactPersonPhone": "மலேசியா வேலை தொடர்பு நபர் தொலைபேசி",
     "next": "அடுத்த →",
     "errorAddress": "உங்கள் வேலை முகவரியை உள்ளிடவும்.",
     "errorPinCode": "சரியான பின் குறியீட்டை உள்ளிடவும்.",
     "errorContactPersonName": "தொடர்பு நபரின் பெயரை உள்ளிடவும்.",
     "errorContactPersonPhone": "சரியான தொலைபேசி எண்ணை உள்ளிடவும்.",
     "errorState": "ஒரு மாநிலத்தை தேர்ந்தெடுக்கவும்.",
-    "errorCity": "ஒரு நகரத்தை தேர்ந்தெடுக்கவும்."
+    "errorCity": "ஒரு நகரத்தை தேர்ந்தெடுக்கவும்.",
+    "errorPinCodeLength": "அஞ்சல் குறியீடு 3 முதல் 9 இலக்கங்கள் இருக்க வேண்டும்.",
+    "errorContactPersonNameLength": "தொடர்பு நபர் பெயர் 3 முதல் 20 எழுத்துகள் இருக்க வேண்டும்.",
+    "errorContactPersonPhoneLength": "தொடர்பு நபர் தொலைபேசி எண் 9 முதல் 12 இலக்கங்கள் இருக்க வேண்டும்."
   },
   "nativeDetails": {
     "completeProfile": "உங்கள் மொத்த விவரங்களை முடிக்கவும்",
@@ -517,7 +549,10 @@
     "errorContactPersonPhone": "சரியான தொலைபேசி எண்ணை உள்ளிடவும்.",
     "errorCountry": "ஒரு நாட்டை தேர்ந்தெடுக்கவும்.",
     "errorState": "ஒரு மாநிலத்தை தேர்ந்தெடுக்கவும்.",
-    "errorCity": "ஒரு நகரத்தை தேர்ந்தெடுக்கவும்."
+    "errorCity": "ஒரு நகரத்தை தேர்ந்தெடுக்கவும்.",
+    "errorPinCodeLength": "அஞ்சல் குறியீடு 3 முதல் 9 இலக்கங்கள் இருக்க வேண்டும்.",
+    "errorContactPersonNameLength": "பெயர் 3 முதல் 20 எழுத்துகள் இருக்க வேண்டும்.",
+    "errorContactPersonPhoneLength": "தொலைபேசி எண் 9 முதல் 12 இலக்கங்கள் இருக்க வேண்டும்."
   },
   
     "passportDetails": {
@@ -532,14 +567,23 @@
       "placeOfIssue": "வெளியீட்டு இடம்",
       "next": "அடுத்தது",
       "registering": "பதிவு செய்யப்படுகிறது...",
-      "errorPassportNumber": "தயவுசெய்து உங்கள் கடவுச்சீட்டு எண்ணை உள்ளிடவும்.",
-      "errorSurname": "தயவுசெய்து உங்கள் குடும்பப்பெயரை உள்ளிடவும்.",
-      "errorGivenNames": "தயவுசெய்து உங்கள் பெயர்களை உள்ளிடவும்.",
-      "errorNationality": "தயவுசெய்து உங்கள் தேசியத்தை உள்ளிடவும்.",
-      "errorDateOfIssue": "தயவுசெய்து வெளியீட்டுத் தேதியை உள்ளிடவும்.",
-      "errorDateOfExpiry": "தயவுசெய்து முடிவுத் தேதியை உள்ளிடவும்.",
-      "errorPlaceOfIssue": "தயவுசெய்து வெளியீட்டு இடத்தை உள்ளிடவும்.",
-      "errorLogin": "உங்கள் அமர்வு காலாவதியாகிவிட்டது. மீண்டும் உள்நுழைக.",
+      "errorIssueDateFuture": "வழங்கப்பட்ட தேதி எதிர்காலத்தில் இருக்க முடியாது",
+    "errorExpiryBeforeIssue": "காலாவதி தேதி வழங்கப்பட்ட தேதியை விட பிந்தையதாக இருக்க வேண்டும்",
+         "errorPassportNumber": "தயவுசெய்து உங்கள் பாஸ்போர்ட் எண்ணை உள்ளிடவும்.",
+    "errorPassportNumberFormat": "பாஸ்போர்ட் எண் 6-9 எழுத்துகள் மற்றும் எண்கள் மட்டும் இருக்க வேண்டும் (சிறப்பு எழுத்துகள் இல்லாமல்).",
+    "errorSurname": "தயவுசெய்து உங்கள் குடும்பப்பெயரை உள்ளிடவும்.",
+    "errorSurnameFormat": "குடும்பப்பெயர் எழுத்துகள் மற்றும் இடைவெளிகள் மட்டும் இருக்க வேண்டும்.",
+    "errorGivenNames": "தயவுசெய்து உங்கள் பெயர்களை உள்ளிடவும்.",
+    "errorGivenNamesFormat": "பெயர்கள் எழுத்துகள் மற்றும் இடைவெளிகள் மட்டும் இருக்க வேண்டும்.",
+    "errorNationality": "தயவுசெய்து உங்கள் நாட்டை உள்ளிடவும்.",
+    "errorNationalityFormat": "நாட்டுப்பெயர் எழுத்துகள் மற்றும் இடைவெளிகள் மட்டும் இருக்க வேண்டும்.",
+    "errorDateOfIssue": "தயவுசெய்து வெளியீட்டு தேதியை உள்ளிடவும்.",
+    "errorDateOfExpiry": "தயவுசெய்து காலாவதி தேதியை உள்ளிடவும்.",
+    "errorDateFormat": "தேதி DD/MM/YYYY வடிவத்தில் இருக்க வேண்டும்.",
+    "errorFutureDate": "தேதி எதிர்காலத்தில் இருக்க முடியாது.",
+    "errorPlaceOfIssue": "தயவுசெய்து வெளியீட்டு இடத்தை உள்ளிடவும்.",
+    "errorPlaceOfIssueFormat": "வெளியீட்டு இடம் எழுத்துகள் மற்றும் இடைவெளிகள் மட்டும் இருக்க வேண்டும்.",
+    "errorLogin": "தொடர உங்கள் கணக்கில் உள்நுழைய வேண்டும்.",
       "alert": {
         "attention": "கவனம்"
       }
@@ -556,7 +600,7 @@
   "payment1": {
     "title": "செய்தித்தாள்கள் & மாத இதழ்கள்",
     "pdfVersions": "தமிழ் செய்தித்தாள்கள் மற்றும் மாத இதழ்களின் PDF பதிப்புகள்",
-    "costLabel": "{cost}.00 MYR",
+    "costLabel": "{cost}.00 RM",
     "paypal": "பேபால்",
     "paypalDescription": "உங்கள் ஆர்டரை பாதுகாப்பாக முடிக்க பேபால் ��ணையதளத்திற்கு மாற்றப்படுவீர்கள்",
     "ipay88": "IPay88",
@@ -576,15 +620,15 @@
     "quarterlyDesc": "3 மாத அணுகலுடன் 10% சேமிக்கவும்",
     "halfYearly": "அரையாண்டு சந்தா",
     "halfYearlyDesc": "6 மாத அணுகலுடன் 15% சேமிக்கவும்",
-    "annually": "வருடாந்திர ச்தா",
+    "annually": "வருடாந்திர சந்தா",
     "annuallyDesc": "12 மாத அணுகலுடன் 20% சேமிக்கவும்",
-    "currency": "MYR",
+    "currency": "RM",
     "selectPlan": "திட்டத்தை தேர்ந்தெடுக்கவும்"
   },
   "chatSupport": {
-    "title": "அரட்டை ஆதரவு",
+    "title": "வாடிக்கையாளர்  ஆதரவு",
     "subtitle": "எங்கள் ஆதரவு குழுவிடமிருந்து உடனடி உதவி பெறுங்கள்",
-    "startChat": "அரட்டையைத் தொடங்கு",
+    "startChat": "தொடங்கு",
     "supportInfo": {
       "title": "ஆதரவு தகவல்",
       "availability": {
@@ -593,11 +637,11 @@
       },
       "responseTime": {
         "title": "பதில் நேரம்",
-        "description": "அதிக நேர நேரங்களில் அனைத்து விசாரணைகளுக்கும் 5 நிமிடங்களுக்குள் பதிலளிக்க நாங்கள் முயற்சிககின்றோம்."
+        "description": "உச்ச நேரங்களில் அனைத்து விசாரணைகளுக்கும் 5 நிமிடங்களுக்குள் பதிலளிக்க நாங்கள் பாடுபடுகிறோம்."
       }
     },
     "modal": {
-      "redirecting": "அரட்டை ஆதரவுக்கு வழிநடத்துகிறது...",
+      "redirecting": "வாடிக்கையாளர்  ஆதரவுக்கு வழிநடத்துகிறது...",
       "done": "முடிந்தது"
     }
   },
@@ -723,11 +767,12 @@
     "resendEmail": {
       "question": "மின்னஞ்சல் பெறவில்லையா?",
       "resend": "மீண்டும் அனுப்பு",
-      "resending": "மீண்டும் அனுப்புகிறது..."
+      "resending": "மீண்டும் அனுப்புகிறது...",
+
     },
     "toasts": {
       "resendSuccess": "சரிபார்ப்பு மின்னஞ்சல் வெற்றிகரமாக மீண்டும் அனுப்பப்பட்டது.",
-      "resendFailed": "சரிபார்ப்பு மின்னஞ்சலை மீண்டும் அனுப்ப முடியவில்லை.",
+      "resendFailed": "மின்னஞ்சல் ஏற்கனவே சரிபார்க்கப்பட்டது",
       "error": "மின்னஞ்சலை மீண்டும் அனுப்பும்போது பிழை ஏற்பட்டது."
     }
   },
@@ -817,7 +862,7 @@
     "communityNews": "சமூக செய்திகள்",
     "loadingNews": "செய்திகள் ஏற்றப்படுகிறது...",
     "noNews": "செய்திகள் எதுவும் இல்லை",
-    "addressGrievance": "மனுக்களை சமர்ப்பிக்க",
+    "addressGrievance": "மனக்குறை சமர்ப்பிக்க",
     "requestAid": "உதவி கோரிக்கை",
     "myself": "எனக்காக",
     "someoneElse": "மற்றொருவருக்காக",

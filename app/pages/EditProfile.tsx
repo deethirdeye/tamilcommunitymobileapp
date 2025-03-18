@@ -183,13 +183,13 @@ const ProfileForm = () => {
               }))}
               editable={false}
             />
-            <TextInput
+            {/* <TextInput
               style={styles.input}
               placeholder="Current Location"
               value={userData?.basicDetails?.CurrentLocation || ''}
               onChangeText={(text) => setUserData({ ...userData, basicDetails: { ...userData.basicDetails, CurrentLocation: text } })}
               editable={false}
-            />
+            /> */}
           </ExpandableSection>
 
           {/* Native Details */}

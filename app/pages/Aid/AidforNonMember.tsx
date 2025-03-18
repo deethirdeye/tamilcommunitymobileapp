@@ -59,11 +59,30 @@ const NonMemberDetails: React.FC = () => {
     fetchUserId();
   }, []);
 
-  
+  const validateForm = () => {
+    if (!fullName) return t('validations.fullNameRequired');
+    if (!/^[a-zA-Z\s]{3,20}$/.test(fullName)) return t('validations.fullNameMinLength');
+    if (!email) return t('validations.emailRequired');
+    if (!/\S+@\S+\.\S+/.test(email)) return t('validations.emailInvalid');
+    if (!mobileNumber) return t('validations.mobileRequired');
+    if (!/^\d{9,20}$/.test(mobileNumber))return t('validations.mobileNumberInvalid');
+    if (!EmergencyContactPersonName) return t('validations.emergencyContactNameRequired');
+    if (EmergencyContactPersonName.length < 3) return t('validations.emergencyContactNameMinLength');
+    if (!emergencyContactNumber) return t('validations.emergencyContactNumberRequired');
+    if (!/^\d{9,20}$/.test(emergencyContactNumber))
+      
+      return t('validations.emergencyContactNumberInvalid');
+    return null;
+  };
 
   const handleNext = async () => {
+    const validationError = validateForm();
+    if (validationError) {
+          Alert.alert(t('login.alerts.attention'), validationError);
+          return;
+        }
     if (!fullName || !email || !mobileNumber || !EmergencyContactPersonName || !emergencyContactNumber) {
-      Alert.alert(t('alerts.error'), t('alerts.fillAllFields'));
+      Alert.alert(   t('login.alerts.attention'), t('alerts.fillAllFields'));
       return;
     }
 
@@ -90,7 +109,7 @@ const NonMemberDetails: React.FC = () => {
         setModalVisible(true);
         router.push("/pages/Aid/AidForSomeoneNonMember");
       } else {
-        Alert.alert("Error", data.message || "Failed to submit the request.");
+        Alert.alert(t('login.alerts.attention'), data.message || "Email or Mobile Number already exists.");
       }
     } catch (error) {
       Alert.alert("Error", "Network error. Please try again later.");
@@ -104,59 +123,9 @@ const NonMemberDetails: React.FC = () => {
     router.push("/pages/Aid/AidForSomeoneNonMember");
 
   };
-  // const startRecording = async () => {
-  //   try {
-  //     console.log('Requesting permissions..');
-  //     await Audio.requestPermissionsAsync();
+ 
 
-  //     console.log('Starting recording..');
-  //     const { recording } = await Audio.Recording.createAsync(
-  //       Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-  //     );
-  //     setRecording(recording);
-  //     console.log('Recording started');
-  //   } catch (err) {
-  //     console.error('Failed to start recording', err);
-  //   }
-  // };
-
-
-  const stopRecording = async () => {
-    console.log('Stopping recording..');
-    if (recording) {
-      await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
-      console.log('Recording stopped and stored at', uri);
-      setRecording(null);
-      setRecordedUri(uri);
-    }
-  };
-
-  
-  const playRecording = async () => {
-    if (recordedUri) {
-      console.log('Loading sound for playback..');
-      const { sound } = await Audio.Sound.createAsync({ uri: recordedUri });
-      setSound(sound);
-      console.log('Playing sound..');
-      await sound.playAsync();
-    }
-  };
-
-  const stopPlayback = async () => {
-    if (sound) {
-      console.log('Stopping playback..');
-      await sound.stopAsync();
-      setSound(null);
-    }
-  };
-
-  // Function to delete the recording
-  const deleteRecording = () => {
-    setRecordedUri(null); 
-    setSound(null);
-    console.log('Recording deleted.');
-  };
+ 
 
   return (
     <LinearGradient

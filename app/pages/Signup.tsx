@@ -48,6 +48,9 @@ const Signup: React.FC = () => {
     if (params.email) {
       setEmail(params.email as string); // Cast to string
     }
+    if (params.mobileNumber) {
+      setEmail(params.mobileNumber as string); // Cast to string
+    }
   }, [params]);
 
   const countryPrefixes = [
@@ -77,7 +80,7 @@ const Signup: React.FC = () => {
     }
     if (!mobileNumber.trim()) {
         newErrors.mobileNumber = t('signup.mobileNumberRequired');
-    } else if (mobileNumber.length < 8 || mobileNumber.length > 12) {
+    } else if (mobileNumber.length < 10|| mobileNumber.length > 12) {
         newErrors.mobileNumber = t('signup.mobileNumberInvalidLength'); // Add this key to your translations
     }
     if (!password.trim()) {
@@ -126,9 +129,9 @@ const Signup: React.FC = () => {
           params: { email, fullName, mobileNumber: `${selectedCountryCode}${mobileNumber}`, password },
         });
       } else if (responseData.ResponseCode === 2) {
-        Alert.alert("Error", responseData.Message || t('signup.userAlreadyExists'));
+        Alert.alert(t('alert.attention'), responseData.Message || t('signup.userAlreadyExists'));
       } else {
-        Alert.alert("Error", responseData.Message || t('signup.somethingWentWrong'));
+        Alert.alert(t('alert.attention'), responseData.Message || t('signup.somethingWentWrong'));
       }
     } catch (error) {
       Alert.alert(t('alert.attention'), t('signup.networkError'));

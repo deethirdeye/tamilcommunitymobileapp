@@ -28,24 +28,30 @@ const EmergencyDetails = () => {
   const [otherEmergencyPhone, setOtherEmergencyPhone] = useState(formData.emergencyDetails?.OtherEmergencyPhone || '');
 
   const handleFormDataUpdate = () => {
-    // Validation
-    if (!malaysiaEmergencyContactName) {
-      Alert.alert(t('alert.attention'), t('emergencyDetails.errorContactName'));
-      return false; // Return false if validation fails
+    // Validation for Malaysia Emergency Contact Name (3-20 characters, only letters and spaces)
+    if (!/^[a-zA-Z\s]{3,20}$/.test(malaysiaEmergencyContactName)) {
+      Alert.alert(t('alert.attention'), t('emergencyDetails.errorContactNameLength'));
+      return false;
     }
-    if (!malaysiaEmergencyPhone) {
-      Alert.alert(t('alert.attention'), t('emergencyDetails.errorEmergencyPhone'));
-      return false; // Return false if validation fails
+  
+    // Validation for Malaysia Emergency Phone (9-20 digits)
+    if (!/^\d{9,20}$/.test(malaysiaEmergencyPhone)) {
+      Alert.alert(t('alert.attention'), t('emergencyDetails.errorEmergencyPhoneLength'));
+      return false;
     }
-    if (!otherEmergencyContactName) {
-      Alert.alert(t('alert.attention'), t('emergencyDetails.errorOtherContactName'));
-      return false; // Return false if validation fails
+  
+    // Validation for Other Emergency Contact Name (3-20 characters, only letters and spaces)
+    if (!/^[a-zA-Z\s]{3,20}$/.test(otherEmergencyContactName)) {
+      Alert.alert(t('alert.attention'), t('emergencyDetails.errorOtherContactNameLength'));
+      return false;
     }
-    if (!otherEmergencyPhone) {
-      Alert.alert(t('alert.attention'), t('emergencyDetails.errorOtherEmergencyPhone'));
-      return false; // Return false if validation fails
+  
+    // Validation for Other Emergency Phone (9-20 digits)
+    if (!/^\d{9,20}$/.test(otherEmergencyPhone)) {
+      Alert.alert(t('alert.attention'), t('emergencyDetails.errorOtherEmergencyPhoneLength'));
+      return false;
     }
-
+  
     // If all validations pass, update form data
     setFormData(prevData => ({
       ...prevData,
@@ -56,10 +62,10 @@ const EmergencyDetails = () => {
         OtherEmergencyPhone: otherEmergencyPhone
       }
     }));
-
+  
     return true; // Return true if all validations pass
   };
-
+  
   // Function to handle navigation
   const handleNext = () => {
     const isValid = handleFormDataUpdate(); // Call validation function
@@ -123,10 +129,10 @@ const EmergencyDetails = () => {
               onChangeText={setOtherEmergencyPhone}
             />
 
-            <TouchableOpacity
-              style={[styles.button]}
-              onPress={handleNext} // Call handleNext for validation and navigation
-            >
+           <TouchableOpacity
+                         style={[styles.button]}
+                         onPress={handleNext}
+                       >
               <Text style={[tailwind.textWhite, tailwind.textLg, tailwind.fontBold]}>
                 {t('emergencyDetails.nextButton')}
               </Text>
