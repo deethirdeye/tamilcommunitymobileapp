@@ -87,9 +87,9 @@ const NewsMagazine = () => {
           ))}
         </View>
         {/* Additional Information */}
-        {/* <Text style={[tailwind.textSm, tailwind.textBlue600, tailwind.textCenter, tailwind.mT8, tailwind.mB12]}>
-          {t('newsMagazine.additionalInfo')}
-        </Text> */}
+        <Text style={[tailwind.textSm, tailwind.textBlue600, tailwind.textCenter, tailwind.mT8, tailwind.mB12]}>
+          {/* {t('newsMagazine.additionalInfo')} */}
+        </Text>
       </ScrollView>
     </LinearGradient>
   );
@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
+    
   },
   iconBackground: {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',

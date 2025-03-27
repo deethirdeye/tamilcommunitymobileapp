@@ -443,7 +443,7 @@
     "selectCity": "Select City",
     "pinCode": "Pin Code",
     "contactPersonName": "Malaysia Workplace Contact Person Name",
-    "contactPersonPhone": "Malaysia Workpalce Contact Person Phone",
+    "contactPersonPhone": "Malaysia Workplace Contact Person Phone",
     "next": "Next →",
     "errorAddress": "Please enter your work address.",
     "errorPinCode": "Please enter a valid pin code.",
@@ -743,16 +743,19 @@
   "newPassword": {
     "setNewPassword": "Set New Password",
     "enterNewPassword": "Please enter your new password and verification code",
+    "verificationCodeMustBe4Digits": "Verification code must be 4 digits",
+    "passwordRequirements": "Password must be at least 6 characters long and include at least one letter and one number.",
     "verificationCode": "Verification Code",
     "newPassword": "New Password",
     "confirmPassword": "Confirm Password",
     "resetPassword": "Reset Password",
     "resetting": "Resetting...",
     "errorPasswordsDoNotMatch": "Passwords do not match.",
+    "passwordsDoNotMatch": "Passwords do not match.",
     "errorPasswordEmpty": "Password cannot be empty.",
     "errorVerificationCodeEmpty": "Verification code cannot be empty.",
     "successResetPassword": "Password successfully reset.",
-    "errorResetPassword": "Failed to reset password.",
+    "errorResetPassword": "Verification code is wrong.",
     "errorSomethingWentWrong": "Something went wrong. Please try again.",
     "passwordCannotBeEmpty": "Password cannot be empty.",
     "verificationCodeCannotBeEmpty": "Verification code cannot be empty."
@@ -777,6 +780,8 @@
   "passwordReset": {
     "passwordReset": "Password Reset",
     "title": "Enter your registered email address",
+    "emailRequired":"Email is required",
+    "invalidEmail" :"Please enter a valid email address",
     "emailPlaceholder": "Enter your email",
     "sendButton": {
       "sending": "Sending...",
@@ -791,7 +796,7 @@
     },
     "errors": {
       "generic": "Something went wrong. Please try again.",
-      "emailSend": "Failed to send reset email."
+      "emailSend": "You not registered with us."
     }
   },
   "alert": {
@@ -865,6 +870,8 @@
     "stopRecording": "Please stop recording before sending a reply.",
     "success": "Success",
     "commentAdded": "Comment added successfully",
+    "playAudio": "Play Recording",
+    "pauseAudio":"Stop Audio",
     
     "actionDisabled": "You cannot go back while recording is in progress.",
     "reply": {

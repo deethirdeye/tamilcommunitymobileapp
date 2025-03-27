@@ -289,7 +289,7 @@ useEffect(()=> {
               text2: 'Please fill in your basic details to continue.',
             });
             router.push({
-              pathname: '/pages/completeuser/BasicDetails',
+              pathname: '/pages/Signup',
               params: {
                 FullName: data.ResponseData[0].FullName,
                 Email: data.ResponseData[0].Email,
@@ -615,7 +615,9 @@ useEffect(()=> {
               >
                 <Text style={[tailwind.textGray700]}>தமிழ்</Text>
               </TouchableOpacity>
+              
             </View>
+            
           )}
           </ScrollView>
         </LinearGradient>

@@ -15,6 +15,8 @@ import { AppConfig } from "@/app/config/AppConfig"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useDescriptionAndRecordingHandlers } from "@/components/handlers/DescriptionAndRecordingHandlers"
 import DescriptionInput from "@/components/DescriptionInput"
+import { RefreshControl } from "react-native-gesture-handler"
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Add this interface for the comment request
 interface CommentRequest {
@@ -33,13 +35,15 @@ interface CommentRequest {
 
 // Define the interface for request details
 interface RequestDetails {
-  RecordingPath?: string // Optional property
+  RecordingPath?: string; // Optional property
+  // Add other properties as needed
+  CreatedOn?: string; // Example of another property
+  AidType?: string; // Example of another property
+  FullName?: string;
   ProcessStatus?: string
-  CreatedOn?: string // Example of another property
-  AidType?: string // Example of another property
-  Description?: string
+AidForname?: string;
+  Description?: string;
 }
-
 // Add interface for comments
 interface Comment {
   RequestID: string
@@ -76,18 +80,18 @@ const AidDetails = () => {
   const [aidType, setAidType] = useState("")
   const [customAidType, setCustomAidType] = useState("")
   const [description, setDescription] = useState("")
-
+  const [refreshing, setRefreshing] = useState(false);
   // Recording states
   const [recording, setRecording] = useState<Audio.Recording | null>(null)
   const [recordingStatus, setRecordingStatus] = useState<"idle" | "recording" | "recorded">("idle")
   const [sound, setSound] = useState<Audio.Sound | null>(null)
   const [recordedUri, setRecordedUri] = useState<string | null>(null)
   const blinkAnim = useRef(new Animated.Value(1)).current
-  const [isRecording, setIsRecording] = useState(isRecording)
+  const [isRecording, setIsRecording] = useState(false)
   const [attachments, setAttachments] = useState<any[]>([]) // Changed Attachment to any
   const [modalVisible, setModalVisible] = useState(false)
   const [userId, setUserId] = useState<string | number | null>(null)
-
+  const [currentlyPlayingId, setCurrentlyPlayingId] = useState<string | null>(null);
   const handlers = useDescriptionAndRecordingHandlers({
     userId,
     aidType,
@@ -149,29 +153,30 @@ const AidDetails = () => {
       BackHandler.removeEventListener("hardwareBackPress", backAction)
     }
   }, [recordingStatus])
-  // Fetch aid request details by RequestID
   useEffect(() => {
     if (RequestID) {
-      const fetchRequestDetails = async () => {
-        try {
-          const response = await fetch(
-            `${AppConfig.APIURL}${TamilCommunityApi.GET_BASIC_AID_BY_REQUEST_ID}/${RequestID}`,
-          )
-          const result = await response.json()
-
-          if (response.ok && result.ResponseData) {
-            setRequestDetails(result.ResponseData[0][0]) // Ensure this includes RecordingPath
-          } else {
-            Alert.alert(t("trackAidDetailsSelf.error"), t("trackAidDetailsSelf.cancelRequestMessage"))
-          }
-        } catch (error) {
-          Alert.alert(t("trackAidDetailsSelf.error"), t("trackAidDetailsSelf.networkError"))
-        }
-      }
-
-      fetchRequestDetails()
+      fetchComments();
+      fetchRequestDetails();
     }
-  }, [RequestID, refreshKey])
+  }, [RequestID, refreshKey]);
+
+  // Fetch aid request details by RequestID
+  const fetchRequestDetails = async () => {
+    try {
+      const response = await fetch(
+        `${AppConfig.APIURL}${TamilCommunityApi.GET_BASIC_AID_BY_REQUEST_ID}/${RequestID}`,
+      );
+      const result = await response.json();
+  
+      if (response.ok && result.ResponseData) {
+        setRequestDetails(result.ResponseData[0][0]); // Ensure this includes RecordingPath
+      } else {
+        Alert.alert(t("trackAidDetailsSelf.error"), t("trackAidDetailsSelf.cancelRequestMessage"));
+      }
+    } catch (error) {
+      Alert.alert(t("trackAidDetailsSelf.error"), t("trackAidDetailsSelf.networkError"));
+    }
+  };
 
   useEffect(() => {
     const fetchUserCode = async () => {
@@ -413,92 +418,122 @@ const AidDetails = () => {
     setAttachments((prevAttachments) => prevAttachments.filter((attachment) => attachment.id !== id))
   }
 
-  const handlePlayRecording = async (recordingPath: string | null) => {
+  const handlePlayRecording = async (recordingPath: string | null, commentId: number) => {
     if (!recordingPath) {
-      Alert.alert("Error", "No recording file available to play.")
-      return
+      Alert.alert("Error", "No recording file available to play.");
+      return;
     }
-
+  
     try {
-      const { sound: newSound } = await Audio.Sound.createAsync({ uri: recordingPath }, { shouldPlay: true })
-
-      // Play the sound
-      await newSound.playAsync()
-
+      // If this recording is already playing, pause it
+      if (currentlyPlayingId === commentId.toString()) {
+        if (sound) {
+          await sound.pauseAsync();
+        }
+        setCurrentlyPlayingId(null);
+        return;
+      }
+  
+      // Stop any currently playing sound
+      if (sound) {
+        await sound.unloadAsync();
+        setSound(null);
+      }
+  
+      // Load and play the new recording
+      const { sound: newSound } = await Audio.Sound.createAsync(
+        { uri: recordingPath },
+        { shouldPlay: true }
+      );
+      
+      setSound(newSound);
+      setCurrentlyPlayingId(commentId.toString());
+  
       // Handle playback completion
       newSound.setOnPlaybackStatusUpdate((status) => {
-        if (status && status.isLoaded && "didJustFinish" in status && status.didJustFinish) {
-          console.log("Playback finished")
+        if (status.isLoaded && status.didJustFinish) {
+          setCurrentlyPlayingId(null);
         }
-      })
+      });
     } catch (error) {
-      console.error("Error playing recording:", error)
-      Alert.alert("Error", "Failed to play recording")
+      console.error("Error playing recording:", error);
+      Alert.alert("Error", "Failed to play recording");
     }
-  }
+  };
 
   const sendComment = async () => {
     if (recordingStatus === "recording") {
-      Alert.alert(t("login.alerts.attention"), t("trackAidDetailsSelf.stopRecording"))
-      return
+      Alert.alert(t("login.alerts.attention"), t("trackAidDetailsSelf.stopRecording"));
+      return;
     }
     if (!description.trim() && !recordedUri && attachments.length === 0) {
-      Alert.alert(t("login.alerts.attention"), t("trackAidDetailsSelf.emptyComment"))
-      return
+      Alert.alert(t("login.alerts.attention"), t("trackAidDetailsSelf.emptyComment"));
+      return;
     }
-
-    setIsLoading(true)
+  
+    setIsLoading(true);
     try {
       // Handle file uploads if any
-      const attachmentPath = ""
-
+      const attachmentPath = "";
+  
       const uploadRecording = async () => {
         if (!recordedUri) {
-          console.error("No recording URI found.")
-          return null
+          console.error("No recording URI found.");
+          return null;
         }
-
+  
         try {
-          const fileUri = recordedUri // Ensure this is a `file://` URI
-
-          const formData = new FormData()
+          const fileUri = recordedUri; // Ensure this is a `file://` URI
+  
+          const formData = new FormData();
           formData.append("audioFile", {
             uri: fileUri,
             name: `recording_${Date.now()}.m4a`,
             type: "audio/m4a",
-          } as any)
-
+          } as any);
+  
           const uploadResponse = await fetch(`${AppConfig.APIURL}${TamilCommunityApi.UPLOAD_RECORDING}`, {
             method: "POST",
             body: formData,
             headers: {
               Accept: "application/json",
             },
-          })
-
+          });
+  
           if (!uploadResponse.ok) {
-            const errorData = await uploadResponse.json()
-            throw new Error(errorData.title || "Failed to upload recording")
+            const errorData = await uploadResponse.json();
+            throw new Error(errorData.title || "Failed to upload recording");
           }
-
-          const responseData = await uploadResponse.json()
-          return responseData.blobUrl
+  
+          const responseData = await uploadResponse.json();
+          return responseData.blobUrl;
         } catch (error) {
-          console.error("Error in uploadRecording:", error)
-          Alert.alert("Upload Error", "Failed to upload recording")
-          return null
+          console.error("Error in uploadRecording:", error);
+          Alert.alert("Upload Error", "Failed to upload recording");
+          return null;
         }
-      }
-
-      let recordingPath = null
-      console.log(recordingStatus)
+      };
+  
+      let recordingPath = null;
       if (recordingStatus === "recorded") {
-        recordingPath = await uploadRecording()
+        recordingPath = await uploadRecording();
       }
       if (recordingStatus === "idle") {
-        recordingPath = null
+        recordingPath = null;
       }
-      console.log(recordingPath)
+  
+      // Stop and clean up any active recording
+      if (recording) {
+        await recording.stopAndUnloadAsync();
+        setRecording(null);
+      }
+  
+      // Unload any active sound
+      if (sound) {
+        await sound.unloadAsync();
+        setSound(null);
+      }
+  
       const commentData = {
         RequestID: RequestID as string,
         CommenterCode: userCode, // Ensure userCode is set
@@ -506,55 +541,54 @@ const AidDetails = () => {
         AdminUserFlg: 0,
         AttachmentPath: attachmentPath,
         RecordingPath: recordingPath,
-      }
-      console.log(commentData)
+      };
+  
       const response = await fetch(`${AppConfig.APIURL}/api/Grievance/AddComment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(commentData),
-      })
-
-      const result = await response.json()
-
+      });
+  
+      const result = await response.json();
+  
       if (response.ok) {
-        // Clear form
-        setNewComment("")
-        setDescription("")
-        setRecordedUri(null)
-        setAttachments([])
-
-        // Refresh the comments list
-        setRefreshKey((prev) => prev + 1)
-
-        Alert.alert(t("login.alerts.success"), t("trackAidDetailsSelf.commentAdded"))
+        // Clear all states
+        setDescription(""); // Clear the description input
+        setRecordedUri(null); // Clear the recorded audio URI
+        setRecordingStatus("idle"); // Reset recording status
+        setAttachments([]); // Clear attachments
+  
+        // Refresh the page to fetch updated data
+        await handleRefresh();
+  
+        Alert.alert(t("login.alerts.success"), t("trackAidDetailsSelf.commentAdded"));
       } else {
-        Alert.alert(t("login.alerts.error"), t("trackAidDetailsSelf.errorAddingComment"))
+        Alert.alert(t("login.alerts.error"), t("trackAidDetailsSelf.errorAddingComment"));
       }
     } catch (error) {
-      console.error("Error sending comment:", error)
-      Alert.alert(t("login.alerts.error"), t("trackAidDetailsSelf.errorAddingComment"))
+      console.error("Error sending comment:", error);
+      Alert.alert(t("login.alerts.error"), t("trackAidDetailsSelf.errorAddingComment"));
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
-  // Add a function to fetch comments
   const fetchComments = async () => {
     try {
-      const response = await fetch(`${AppConfig.APIURL}/api/Grievance/GetCommentsByRequestID/${RequestID}`)
-      const result = await response.json()
-
+      const response = await fetch(`${AppConfig.APIURL}/api/Grievance/GetCommentsByRequestID/${RequestID}`);
+      const result = await response.json();
+  
       if (response.ok && result.ResponseData) {
-        setComments(result.ResponseData[0])
+        setComments(result.ResponseData[0]);
       } else {
-        console.error("Failed to fetch comments:", result)
+        console.error("Failed to fetch comments:", result);
       }
     } catch (error) {
-      console.error("Error fetching comments:", error)
+      console.error("Error fetching comments:", error);
     }
-  }
+  };
 
   // Add useEffect to fetch comments
   useEffect(() => {
@@ -583,14 +617,37 @@ const AidDetails = () => {
     )
   }
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await fetchComments();
+      await fetchRequestDetails();
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+      Alert.alert(t("trackAidDetailsSelf.error"), t("trackAidDetailsSelf.networkError"));
+    } finally {
+      setRefreshing(false);
+    }
+  };
+  const sortedComments = [...comments].sort((a, b) => {
+    return new Date(a.CreatedOn).getTime() - new Date(b.CreatedOn).getTime();
+  });
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <LinearGradient
       colors={["#E1F2FF", "#BFE6FF", "#99D6FF"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={[tailwind.flex1]}
     >
-      <ScrollView style={[tailwind.flex1]}>
+      <ScrollView style={[tailwind.flex1]}  refreshControl={
+    <RefreshControl
+      refreshing={refreshing}
+      onRefresh={handleRefresh}
+      colors={["#0369A1"]} // Customize the loading spinner color
+      tintColor="#0369A1" // Customize the loading spinner color (iOS)
+    />
+  }>
         <PageHeader
           title={t("trackAidDetailsSelf.title")}
           showBackButton
@@ -627,6 +684,9 @@ const AidDetails = () => {
               {t("trackAidDetailsSelf.requestId")} {RequestID}
             </Text>
             <Text style={[tailwind.textBase, tailwind.mT2, tailwind.textBlue700]}>
+                          {t('trackAidDetailsSomeone.aidFor')} {requestDetails.FullName || t('trackAidDetailsSomeone.notAvailable')}
+                        </Text>
+            <Text style={[tailwind.textBase, tailwind.mT2, tailwind.textBlue700]}>
               {t("trackAidDetailsSelf.requestedOn")}{" "}
               {requestDetails.CreatedOn ? formatDateTime(requestDetails.CreatedOn) : "N/A"}
             </Text>
@@ -651,7 +711,7 @@ const AidDetails = () => {
               <TouchableOpacity onPress={playAudio} style={[tailwind.flexRow, tailwind.itemsCenter]}>
                 <Ionicons name={isPlaying ? "pause" : "play"} size={24} color="#0369A1" />
                 <Text style={[tailwind.textBase, tailwind.mL2, tailwind.textBlue700]}>
-                  {isPlaying ? "Pause" : "Play"} Audio
+                  {isPlaying ? t('trackAidDetailsSelf.pauseAudio') : t('trackAidDetailsSelf.playAudio')} 
                 </Text>
               </TouchableOpacity>
             </View>
@@ -668,13 +728,13 @@ const AidDetails = () => {
                   <Text>{t("trackAidDetailsSelf.loadingComments")}</Text>
                 </View>
               ) : comments.length > 0 ? (
-                comments.map((comment) => (
+                sortedComments.map((comment) => (
                   <View
                     key={comment.CommentID}
                     style={[tailwind.mB4, tailwind.borderB, tailwind.borderGray200, tailwind.pB4]}
                   >
                     <Text style={[tailwind.fontBold, tailwind.textBlue700]}>
-                      {comment.Name}
+                      {comment.Name}  {" "}
                       {comment.AdminUserFlg === 1 && (
                         <Text style={[tailwind.textSm, tailwind.textGray600]}>
                           {t("trackAidDetailsSelf.tamilCommunityTeam")}
@@ -692,15 +752,23 @@ const AidDetails = () => {
                         <Text style={[tailwind.mL2, tailwind.textBlue600]}>View Attachment</Text>
                       </TouchableOpacity>
                     )}
-                    {comment.RecordingPath && (
-                      <TouchableOpacity
-                        style={[tailwind.mT2, tailwind.flexRow, tailwind.itemsCenter]}
-                        onPress={() => handlePlayRecording(comment.RecordingPath)}
-                      >
-                        <Ionicons name="play" size={20} color="#0369A1" />
-                        <Text style={[tailwind.mL2, tailwind.textBlue600]}>Play Recording</Text>
-                      </TouchableOpacity>
-                    )}
+                   {comment.RecordingPath && (
+  <TouchableOpacity
+    style={[tailwind.mT2, tailwind.flexRow, tailwind.itemsCenter]}
+    onPress={() => handlePlayRecording(comment.RecordingPath, comment.CommentID)}
+  >
+    <Ionicons 
+      name={currentlyPlayingId === comment.CommentID.toString() ? "pause" : "play"} 
+      size={20} 
+      color="#0369A1" 
+    />
+    <Text style={[tailwind.mL2, tailwind.textBlue600]}>
+      {currentlyPlayingId === comment.CommentID.toString() 
+        ? t('trackAidDetailsSelf.pauseAudio') 
+        : t('trackAidDetailsSelf.playAudio')}
+    </Text>
+  </TouchableOpacity>
+)}
                   </View>
                 ))
               ) : (
@@ -723,6 +791,7 @@ const AidDetails = () => {
                   playRecording={handlers.playRecording}
                   deleteRecording={handlers.deleteRecording}
                   pickDocument={handlers.pickDocument}
+                  pauseRecording={handlers.pauseRecording}
                 />
               </View>
               {attachments.length > 0 && (
@@ -751,26 +820,28 @@ const AidDetails = () => {
           </View>
 
           {/* Cancel Request Button */}
-          {requestDetails.ProcessStatus !== "Cancelled" && (
-            <TouchableOpacity
-              style={[
-                tailwind.bgRed500,
-                tailwind.p4,
-                tailwind.roundedLg,
-                tailwind.itemsCenter,
-                tailwind.mT6,
-                tailwind.mB10,
-              ]}
-              onPress={handleCancelRequest}
-            >
-              <Text style={[tailwind.textLg, tailwind.fontBold, tailwind.textWhite]}>
-                {t("trackAidDetailsSelf.cancelRequest")}
-              </Text>
-            </TouchableOpacity>
-          )}
+          {!["Cancelled", "Completed", "Denied"].includes(requestDetails.ProcessStatus || "") && (
+  <TouchableOpacity
+    style={[
+      tailwind.bgRed500,
+      tailwind.p4,
+      tailwind.roundedLg,
+      tailwind.itemsCenter,
+      tailwind.mT6,
+      tailwind.mB10,
+    ]}
+    onPress={handleCancelRequest}
+  >
+    <Text style={[tailwind.textLg, tailwind.fontBold, tailwind.textWhite]}>
+      {t("trackAidDetailsSelf.cancelRequest")}
+    </Text>
+  </TouchableOpacity>
+)}
+
         </View>
       </ScrollView>
     </LinearGradient>
+    </GestureHandlerRootView>
   )
 }
 

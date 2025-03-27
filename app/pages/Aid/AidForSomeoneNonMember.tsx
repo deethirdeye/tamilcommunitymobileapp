@@ -341,7 +341,7 @@ const RequestAid = () => {
       const response = await fetch(`${AppConfig.APIURL}/api/Aid/AddBasicAidSomeone`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json:charset=UTF-8",
         },
         body: JSON.stringify({
           userId: userId,
@@ -619,6 +619,7 @@ const RequestAid = () => {
             playRecording={handlers.playRecording}
             deleteRecording={handlers.deleteRecording}
             pickDocument={handlers.pickDocument}
+            pauseRecording={handlers.pauseRecording}
           />
 
 

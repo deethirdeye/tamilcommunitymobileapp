@@ -372,6 +372,7 @@ const AidForSomeone = () => {
             playRecording={handlers.playRecording}
             deleteRecording={handlers.deleteRecording}
             pickDocument={handlers.pickDocument}
+            pauseRecording={handlers.pauseRecording}
           />
 
           {/* Submit Button */}

@@ -195,7 +195,7 @@ export const useDescriptionAndRecordingHandlersSomeone = (state: StateSomeone) =
       const response = await fetch(`${AppConfig.APIURL}/api/Aid/AddBasicAidSomeone`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json; charset=UTF-8" ,
         },
         body: JSON.stringify({
           userId: state.userId,
@@ -319,7 +319,35 @@ export const useDescriptionAndRecordingHandlersSomeone = (state: StateSomeone) =
 
   const playRecording = async () => {
     try {
-      await state.sound?.playAsync();
+      if (state.sound) {
+        const status = await state.sound.getStatusAsync();
+        if (status.isLoaded) {
+          if (status.isPlaying) {
+            // Already playing, do nothing
+            return;
+          }
+          if (status.positionMillis === status.durationMillis) {
+            // If at the end, reset to start
+            await state.sound.setPositionAsync(0);
+          }
+          await state.sound.playAsync();
+        }
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : t('alerts.unknownError');
+      Alert.alert(t('alerts.error'), errorMessage);
+    }
+  };
+
+  const pauseRecording = async () => {
+    try {
+      if (state.sound) {
+        const status = await state.sound.getStatusAsync();
+        if (status.isLoaded && status.isPlaying) {
+          await state.sound.pauseAsync();
+        }
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t('alerts.unknownError');
@@ -363,5 +391,6 @@ export const useDescriptionAndRecordingHandlersSomeone = (state: StateSomeone) =
     playRecording,
     deleteRecording,
     toggleRecording,
+    pauseRecording,
   };
 }; 

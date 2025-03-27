@@ -17,7 +17,20 @@ const NewPasswordScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
 
+  const validatePassword = (password: string) => {
+    // Minimum 6 characters, at least one letter and one number
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    return passwordRegex.test(password);
+  };
+  
+
   const handleResetPassword = async () => {
+    // Validate verification code is exactly 4 digits
+    if (!/^\d{4}$/.test(verificationCode)) {
+      Alert.alert(t('login.alerts.attention'), t('newPassword.verificationCodeMustBe4Digits'));
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       Alert.alert(t('login.alerts.attention'), t('newPassword.passwordsDoNotMatch'));
       return;
@@ -28,8 +41,11 @@ const NewPasswordScreen: React.FC = () => {
       return;
     }
 
-    if (!verificationCode.trim()) {
-      Alert.alert(t('login.alerts.attention'), t('newPassword.verificationCodeCannotBeEmpty'));
+    if (!validatePassword(newPassword)) {
+      Alert.alert(
+        t('login.alerts.attention'), 
+        t('newPassword.passwordRequirements')
+      );
       return;
     }
 
@@ -62,7 +78,7 @@ const NewPasswordScreen: React.FC = () => {
       setIsLoading(false);
     }
   };
-  { t("newPassword.setNewPassword") }
+
   return (
     <KeyboardAvoidingView
       style={[tailwind.flex1]}
@@ -85,6 +101,7 @@ const NewPasswordScreen: React.FC = () => {
             <Text style={[tailwind.textBase, tailwind.textBlue600, tailwind.mB4, tailwind.textCenter]}>
               {t('newPassword.enterNewPassword')}
             </Text>
+           
 
             <View style={[{ width: "70%" }, tailwind.mB4]}>
               <TextInput
@@ -103,6 +120,8 @@ const NewPasswordScreen: React.FC = () => {
                 value={verificationCode}
                 onChangeText={setVerificationCode}
                 placeholderTextColor="#64748B"
+                keyboardType="number-pad"
+                maxLength={4}
               />
             </View>
 

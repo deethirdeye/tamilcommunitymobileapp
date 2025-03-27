@@ -225,6 +225,7 @@ const Aidforme = () => {
             playRecording={handlers.playRecording}
             deleteRecording={handlers.deleteRecording}
             pickDocument={handlers.pickDocument}
+            pauseRecording={handlers.pauseRecording}
           />
 
           {/* Attachments List */}
