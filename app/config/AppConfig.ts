@@ -13,7 +13,10 @@ function getAPIURL() {
         apiURL = Platform.select({
             ios: "https://localhost:7088",
             android: "https://tamilcommunityapi.thirdeyeinfotech.com",
-            default: "https://tamilcommunityapi.thirdeyeinfotech.com"
+             //android: "https://8984-2405-201-e00b-e8b7-21bc-b379-63f-54aa.ngrok-free.app",
+            
+            default: "https://tamilcommunityapi.thirdeyeinfotech.com",
+            //"https://tamilcommunityapi.thirdeyeinfotech.com"
         });
     } else {
         // Production environment

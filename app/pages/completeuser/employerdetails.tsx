@@ -53,20 +53,20 @@ const EmployerDetails = () => {
 
   const handleFormDataUpdate = () => {
     // Validation for Employer Full Name (9-20 characters, only letters and spaces)
-    if (!/^[a-zA-Z\s]{3,20}$/.test(employerFullName)) {
+    if (!/^[a-zA-Z\s,]{3,20}$/.test(employerFullName)) {
       Alert.alert(t('alert.attention'), t('employerDetails.errorFullNameLength'));
       return false;
     }
   
     // Validation for Company Name (Allows letters, numbers, and spaces)
-if (!/^[a-zA-Z0-9\s]{3,20}$/.test(companyName)) {
+if (!/^[a-zA-Z0-9\s,]{3,20}$/.test(companyName)) {
   Alert.alert(t('alert.attention'), t('employerDetails.errorCompanyName'));
   return false;
 }
 
   
     // Validation for Mobile Number (9-20 digits)
-    if (!/^\d{9,20}$/.test(mobileNumber)) {
+    if (!/^\+\d{9,20}$/.test(mobileNumber)) {
       Alert.alert(t('alert.attention'), t('employerDetails.errorMobileNumberLength'));
       return false;
     }

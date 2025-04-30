@@ -358,10 +358,12 @@
     "dobPlaceholder": "Date of Birth (DD/MM/YYYY)",
     "currentLocation": "Current Location",
     "nextButton": "Next →",
+    "saving": "Saving...",
     "errorDateFormat": "Please enter the date in DD/MM/YYYY format.",
     "permissionDenied": "Permission to access location was denied",
     "errorFutureDate": "You can enter a date in the past only.",
-    "errorMobileFormat":"Date should be in DD/MM/YYYY format."
+    "errorMobileFormat":"Please add the country code before your number in the format +XX, followed by your number",
+    "locationDenied" :"Location is Denied by the user"
   },
   
     "emergencyDetails": {
@@ -378,9 +380,9 @@
       "errorOtherContactName": "Please enter other emergency contact name.",
       "errorOtherEmergencyPhone": "Please enter other emergency phone number.",
       "errorContactNameLength": "Malaysia  contact name must be between 3 to 20 characters.",
-      "errorEmergencyPhoneLength": "Malaysia Emergency phone number must be between 9 to 20 digits.",
+      "errorEmergencyPhoneLength": "Malaysia Emergency phone number must be between 9 to 20 digits and please add the country code +xx",
       "errorOtherContactNameLength": "Other emergency contact name must be between 3 to 20 characters.",
-      "errorOtherEmergencyPhoneLength": "Other emergency phone number must be between 9 to 20 digits."
+      "errorOtherEmergencyPhoneLength": "Other emergency phone number must be between 9 to 20 digits and please add the country code +xx"
     ,
     "alert": {
       "attention": "Attention"
@@ -406,7 +408,7 @@
     "errorPinCode": "Please enter a valid pin code.",
      "errorFullNameLength": "Employer full name must be between 3 to 20 characters.",
     "errorCompanyName": "Company name must be between 3 to 20 characters.",
-    "errorMobileNumberLength": "Mobile number must be between 9 to 20 digits.",
+    "errorMobileNumberLength": "Mobile number must be between 9 to 20 digits and please add the country code +xx",
     "errorIDNumberFormat": "ID number must be alphanumeric and between 5 to 15 characters.",
     "errorAddress": "Employer address is required.",
     "errorState": "State selection is required.",
@@ -430,9 +432,9 @@
     "errorContactPersonPhone": "Please enter a valid phone number.",
     "errorState": "Please select a state.",
     "errorCity": "Please select a city.",
-    "errorPinCodeLength": "Pin code must be between 3 to 9 digits.",
+    "errorPinCodeLength": "Pin code must be between 3 to 9 digits and please add the country code +xx",
     "errorContactPersonNameLength": "Contact person name must be between 3 to 20 characters.",
-    "errorContactPersonPhoneLength": "Contact person phone number must be between 9 to 12 digits."
+    "errorContactPersonPhoneLength": "Contact person phone number must be between 9 to 12 digits and please add the country code +xx"
   },
   "malaysiaWorkDetails": {
     "completeProfile": "Complete your Profile",
@@ -451,9 +453,9 @@
     "errorContactPersonPhone": "Please enter a valid phone number.",
     "errorState": "Please select a state.",
     "errorCity": "Please select a city.",
-    "errorPinCodeLength": "Pin code must be between 3 to 9 digits.",
+    "errorPinCodeLength": "Pin code must be between 3 to 9 digits and please add the country code +xx",
     "errorContactPersonNameLength": "Contact person name must be between 3 to 20 characters.",
-    "errorContactPersonPhoneLength": "Contact person phone number must be between 9 to 20 digits."
+    "errorContactPersonPhoneLength": "Contact person phone number must be between 9 to 20 digits and please add the country code +xx"
   },
   "nativeDetails": {
     "completeProfile": "Complete your Profile",
@@ -476,7 +478,7 @@
     "errorCity": "Please select a city.",
     "errorPinCodeLength": "Pin code must be between 3 to 9 digits.",
     "errorContactPersonNameLength": "Contact Name must be between 3 to 20 characters.",
-    "errorContactPersonPhoneLength": "Phone number must be between 9 to 12 digits."
+    "errorContactPersonPhoneLength": "Phone number must be between 9 to 12 digits and please add the country code +xx"
   },
   
     "passportDetails": {

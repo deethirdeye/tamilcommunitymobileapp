@@ -64,13 +64,13 @@ const MalaysiaDetails = () => {
     }
   
     // Validation for Contact Person Name (9-20 characters, only letters and spaces)
-    if (!/^[a-zA-Z\s]{3,20}$/.test(contactPersonName)) {
+    if (!/^[a-zA-Z\s,]{3,20}$/.test(contactPersonName)) {
       Alert.alert(t('alert.attention'), t('malaysiaDetails.errorContactPersonNameLength'));
       return false;
     }
   
     // Validation for Contact Person Phone (9-20 digits)
-    if (!/^\d{9,20}$/.test(contactPersonPhone)) {
+    if (!/^\+\d{9,20}$/.test(contactPersonPhone)) {
       Alert.alert(t('alert.attention'), t('malaysiaDetails.errorContactPersonPhoneLength'));
       return false;
     }
