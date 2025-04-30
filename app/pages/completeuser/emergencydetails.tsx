@@ -29,25 +29,24 @@ const EmergencyDetails = () => {
 
   const handleFormDataUpdate = () => {
     // Validation for Malaysia Emergency Contact Name (3-20 characters, only letters and spaces)
-    if (!/^[a-zA-Z\s]{3,20}$/.test(malaysiaEmergencyContactName)) {
+    if (!/^[a-zA-Z\s,]{3,20}$/.test(malaysiaEmergencyContactName)) {
       Alert.alert(t('alert.attention'), t('emergencyDetails.errorContactNameLength'));
       return false;
     }
   
     // Validation for Malaysia Emergency Phone (9-20 digits)
-    if (!/^\d{9,20}$/.test(malaysiaEmergencyPhone)) {
+    if (!/^\+\d{9,20}$/.test(malaysiaEmergencyPhone)) {
       Alert.alert(t('alert.attention'), t('emergencyDetails.errorEmergencyPhoneLength'));
       return false;
     }
-  
     // Validation for Other Emergency Contact Name (3-20 characters, only letters and spaces)
-    if (!/^[a-zA-Z\s]{3,20}$/.test(otherEmergencyContactName)) {
+    if (!/^[a-zA-Z\s,]{3,20}$/.test(otherEmergencyContactName)) {
       Alert.alert(t('alert.attention'), t('emergencyDetails.errorOtherContactNameLength'));
       return false;
     }
   
     // Validation for Other Emergency Phone (9-20 digits)
-    if (!/^\d{9,20}$/.test(otherEmergencyPhone)) {
+    if (!/^\+\d{9,20}$/.test(otherEmergencyPhone)) {
       Alert.alert(t('alert.attention'), t('emergencyDetails.errorOtherEmergencyPhoneLength'));
       return false;
     }

@@ -22,17 +22,23 @@ const BasicDetails: React.FC = () => {
   const [currentLocation, setCurrentLocation] = useState(formData.basicDetails?.currentLocation || '');
   const [dob, setDob] = useState(formData.basicDetails?.dob || '');
   const [mobile, setMobile] = useState(initialMobileNumber);
-
+ 
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission to access location was denied');
-        return;
+    (async () => { 
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert(t('alert.attention'), t('basicDetails.locationDenied'));
+          setCurrentLocation("Location Denied By User");
+          return;
+        }
+  
+        let location = await Location.getCurrentPositionAsync({});
+        setCurrentLocation(`${location.coords.latitude}, ${location.coords.longitude}`);
+      } catch (error) {
+        console.error("Error getting location:", error);
+        setCurrentLocation( "Location Error");
       }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setCurrentLocation(`${location.coords.latitude}, ${location.coords.longitude}`);
     })();
   }, []);
 

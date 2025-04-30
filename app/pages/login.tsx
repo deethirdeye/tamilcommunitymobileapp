@@ -14,7 +14,7 @@ import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
 import ImageConfig from "../config/ImageConfig";
 import { makeRedirectUri } from "expo-auth-session";
-
+import { ActivityIndicator } from 'react-native';
 
 
 const webClientId = '872198620379-i4igt6cg79hho53hnotmt2oc593pajol.apps.googleusercontent.com';
@@ -23,10 +23,17 @@ const androidClientId = '845380231252-1jdltrhi5dkf9usphp0m6r0l3uh3r8p6.apps.goog
 
 WebBrowser.maybeCompleteAuthSession();
 
-
+const LoadingOverlay = () => (
+  <View style={[styles.loadingOverlay, StyleSheet.absoluteFill]}>
+    <View style={styles.loadingContainer}>
+      <ActivityIndicator size="large" color="#0369A1" />
+    </View>
+  </View>
+);
 
 const Login: React.FC = () => {
   const router = useRouter();
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [selectedCountryCode, setSelectedCountryCode] = useState("+60");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -49,10 +56,25 @@ const Login: React.FC = () => {
     { value: "+61", flag: "🇦🇺" },
   ];
 
+  //reset cache and states on navigating to the next page
+  const resetStates = () => {
+    setGoogleLoading(false);
+    setIsPasswordVisible(false);
+    setSelectedCountryCode("+60");
+    setMobileNumber("");
+    setPassword("");
+    setLoading(false);
+    setIsLanguageDropdownOpen(false);
+    setLanguageSelectorOpen(false);
+    setIsDropdownVisible(false);
+    setuserDetails(null);
+  };
 
   const redirectUri = makeRedirectUri({
     scheme: "com.deepakthirdeye.tamilcommunity",
     path: "/pages/login",
+    //path: "/oauthredirect",
+    preferLocalhost: true, 
   });
 
   const config = {
@@ -66,24 +88,32 @@ const Login: React.FC = () => {
 const [request,response,promptAsync] = Google.useAuthRequest(config)
 
 
-
-const getUserProfile = async (token:any) =>
-{
-  if (!token) return;
+const getUserProfile = async (token: any) => {
+  if (!token) {
+    setGoogleLoading(false);
+    return;
+  }
   try {
     const response = await fetch("https://www.googleapis.com/userinfo/v2/me", {
-      headers: {Authorization: `Bearer ${token}`}
+      headers: { Authorization: `Bearer ${token}` }
     });
 
     const user = await response.json();
-    console.log(user)
-    setuserDetails(user)
+    console.log(user);
+    setuserDetails(user);
 
-    handleLogin(user)
+    await handlegoogleLogin(user);
+  } catch (error) {
+    console.log(error);
+    Toast.show({
+      type: 'error',
+      text1: 'Login Error',
+      text2: 'Failed to fetch user profile',
+    });
+  } finally {
+    setGoogleLoading(false);
   }
-  catch(error)
-  {console.log(error)}
-}
+};
 
   const handleToken = () => {
     
@@ -126,7 +156,8 @@ useEffect(()=> {
       await AsyncStorage.setItem('userToken', Token);
       await AsyncStorage.setItem('userId', UserID.toString());
       await AsyncStorage.setItem('UserCode', UserCode); // Store UserCode
-      await AsyncStorage.setItem('FullName', FullName); // Store UserName
+      await AsyncStorage.setItem('FullName', FullName); 
+      // Store UserName
       await AsyncStorage.setItem('isLoggedIn',JSON.stringify(true))
       const chec = AsyncStorage.getItem('isLoggedIn')
       console.log(chec,"At login")
@@ -211,6 +242,7 @@ useEffect(()=> {
             text1: 'Incomplete Details',
             text2: 'Please fill in your basic details to continue.',
           });
+          resetStates();
           router.push({
             pathname: '/pages/completeuser/BasicDetails',
             params: {
@@ -231,7 +263,7 @@ useEffect(()=> {
       setLoading(false);
     }
   };
-  const handleLogin = async (googleResponse?: any) => {
+  const handlegoogleLogin = async (googleResponse?: any) => {
 
 
     const messageMap: { [key: string]: string } = {
@@ -267,7 +299,8 @@ useEffect(()=> {
             data.ResponseData[0].Token,
             data.ResponseData[0].UserID,
             data.ResponseData[0].UserCode,
-            data.ResponseData[0].FullName
+            data.ResponseData[0].FullName,
+            
           );
   
           const storedUserId = await AsyncStorage.getItem('userId');
@@ -277,36 +310,48 @@ useEffect(()=> {
           console.log("AsyncUserId:", storedUserId);
           console.log("AsyncUserCode:", storedUserCode);
           console.log("AsyncFullName:", storedFullName);
-  
+          resetStates();
           // Check UserDetailsFlag value
           if (data.ResponseData[0].UserDetailsFlag === 1) {
             router.push('../(drawer)/(tabs)/Aid');
           } else {
+            const { FullName, Email, MobileNumber } = data.ResponseData[0];
+          
             Toast.show({
               type: 'info',
               position: 'top',
               text1: 'Incomplete Details',
               text2: 'Please fill in your basic details to continue.',
             });
+            resetStates();
+            const pathname =
+              !FullName || FullName.trim() === ''
+                ? '/pages/completeuser/BasicDetailsSignup'
+                : '/pages/completeuser/BasicDetails';
+          
             router.push({
-              pathname: '/pages/Signup',
+              pathname,
               params: {
-                FullName: data.ResponseData[0].FullName,
-                Email: data.ResponseData[0].Email,
-                mobileNumber: '',
+                FullName,
+                Email,
+                mobileNumber: MobileNumber,
               },
             });
           }
+          
         } else {
           Alert.alert(
             t('login.alerts.attention'), 
             `${getTranslatedMessage(data.Message, t) || t('login.alerts.googleLoginFailed')}`
           );
+          const emailFromResponse = data.responseData[0].email
           router.push({
-            pathname: '/pages/Signup',
+           pathname: '/pages/completeuser/BasicDetailsSignup',
+            //pathname: '/pages/completeuser/BasicDetails',
+            //pathname: '/pages/Signup',
             params: {
-              fullName: googleResponse?.name || '',
-              email: googleResponse?.email || '',
+             
+              Email: emailFromResponse,
             },
           });
         }
@@ -394,17 +439,6 @@ useEffect(()=> {
     }
   };
   
-  // Define constants for text strings
-  const welcomeToText = t('login.welcome_to');
-  const tamilCommunityPortalText = t('login.tamil_community_portal');
-  const placeForTamilsText = t('login.place_for_tamils');
-  const forgotPasswordText = t('login.forgot_password');
-  const createAccountText = t('login.create_account');
-  const signingInText = t('login.signing_in');
-  const signInText = t('login.sign_in');
-  const mobileNumberPlaceholder = t('login.mobile_number');
-  const passwordPlaceholder = t('login.password');
-
   // Function to handle country code selection
   const handleCountryCodeSelect = (code: string) => {
     setSelectedCountryCode(code);
@@ -413,8 +447,8 @@ useEffect(()=> {
 
   return (
     <TouchableWithoutFeedback onPress={() => {
-      setIsDropdownVisible(false); // Collapse dropdown when touching outside
-      Keyboard.dismiss(); // Dismiss keyboard if open
+      setIsDropdownVisible(false);
+      Keyboard.dismiss();
     }}>
       <KeyboardAvoidingView
         style={[tailwind.flex1]}
@@ -572,6 +606,7 @@ useEffect(()=> {
               <Text
                 style={[tailwind.textBlue600, tailwind.fontBold]}
                 onPress={() => router.push('/pages/Signup')}
+                //onPress={() => router.push('/pages/completeuser/BasicDetailsSignup')}
               >
                 {t('login.create_account')}
               </Text>
@@ -620,6 +655,7 @@ useEffect(()=> {
             
           )}
           </ScrollView>
+          {googleLoading && <LoadingOverlay />}
         </LinearGradient>
 
       </KeyboardAvoidingView>
@@ -653,6 +689,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4.65,
     elevation: 8,
+  },
+  loadingOverlay: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  loadingContainer: {
+    backgroundColor: 'white',
+    padding: 30,
+    borderRadius: 50,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
 

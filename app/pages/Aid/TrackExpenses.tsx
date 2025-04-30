@@ -297,7 +297,7 @@ const RequestAid = () => {
                   tailwind.pX2,
                   tailwind.borderB,
                   tailwind.borderGray200,
-                  index % 2 === 0 ? tailwind.bgWhite : tailwind.bgBlue50,
+                  index % 2 === 0 ? tailwind.bgWhite : tailwind.bgBlue500,
                 ]}
               >
                 <Text style={[tailwind.w12, tailwind.textBlue800]}>{index + 1}</Text>
@@ -374,7 +374,7 @@ const RequestAid = () => {
                   tailwind.pX2,
                   tailwind.borderB,
                   tailwind.borderGray200,
-                  index % 2 === 0 ? tailwind.bgWhite : tailwind.bgBlue50,
+                  index % 2 === 0 ? tailwind.bgWhite : tailwind.bgBlue500,
                 ]}
               >
                 <Text style={[tailwind.w12, tailwind.textBlue800]}>{index + 1}</Text>
